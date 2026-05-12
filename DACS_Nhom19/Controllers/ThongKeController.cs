@@ -1,4 +1,4 @@
-﻿using DACS_Nhom19.Data;
+using DACS_Nhom19.Data;
 using DACS_Nhom19.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +17,8 @@ namespace DACS_Nhom19.Controllers
             _context = context;
         }
 
-        // NHÂN VIÊN: xem thống kê của chính mình
         [Authorize(Roles = "Nhân viên")]
-        public async Task<IActionResult> CaNhan()
+        public async Task<IActionResult> CaNhan(DateOnly? tuNgay, DateOnly? denNgay)
         {
             var maTaiKhoanClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(maTaiKhoanClaim)) return Forbid();
@@ -31,9 +30,16 @@ namespace DACS_Nhom19.Controllers
 
             if (nhanVien == null) return Forbid();
 
+            var (from, to) = ResolveRange(tuNgay, denNgay);
+
             var danhSachHoanThanh = await _context.PhanCongCas
                 .Include(x => x.MaCaNavigation)
-                .Where(x => x.MaNhanVien == nhanVien.MaNhanVien && x.TrangThai == "Hoàn thành")
+                .Where(x => x.MaNhanVien == nhanVien.MaNhanVien
+                            && x.TrangThai == "Hoàn thành"
+                            && x.NgayLam >= from
+                            && x.NgayLam <= to)
+                .OrderBy(x => x.NgayLam)
+                .ThenBy(x => x.MaCaNavigation.GioBatDau)
                 .ToListAsync();
 
             var tongSoCa = danhSachHoanThanh.Count;
@@ -48,27 +54,40 @@ namespace DACS_Nhom19.Controllers
                 TongSoCa = tongSoCa,
                 TongSoGio = tongSoGio,
                 KetQua = (tongSoCa < nhanVien.SoCaToiThieuTuan || tongSoGio < nhanVien.SoGioToiThieuTuan)
-                    ? "Chưa đạt định mức"
-                    : "Đạt định mức"
+                    ? "Chưa đạt định mức" : "Đạt định mức",
+                TuNgay = from,
+                DenNgay = to,
+                DanhSachCa = danhSachHoanThanh.Select(x => new CaLamTrongTuan
+                {
+                    NgayLam = x.NgayLam,
+                    TenCa = x.MaCaNavigation.TenCa,
+                    GioBatDau = x.MaCaNavigation.GioBatDau.ToString("HH:mm"),
+                    GioKetThuc = x.MaCaNavigation.GioKetThuc.ToString("HH:mm"),
+                    SoGio = x.MaCaNavigation.SoGio ?? 0,
+                    TrangThai = x.TrangThai
+                }).ToList()
             };
 
             return View(vm);
         }
 
-        // ADMIN, QUẢN LÝ: xem thống kê toàn bộ nhân viên
         [Authorize(Roles = "Admin,Quản lý")]
-        public async Task<IActionResult> TongHop(string keyword)
+        public async Task<IActionResult> TongHop(string? keyword, DateOnly? tuNgay, DateOnly? denNgay)
         {
+            var (from, to) = ResolveRange(tuNgay, denNgay);
+
             var nhanViens = await _context.NhanViens
                 .OrderBy(x => x.HoTen)
                 .ToListAsync();
 
             var phanCongHoanThanh = await _context.PhanCongCas
                 .Include(x => x.MaCaNavigation)
-                .Where(x => x.TrangThai == "Hoàn thành")
+                .Where(x => x.TrangThai == "Hoàn thành"
+                            && x.NgayLam >= from
+                            && x.NgayLam <= to)
                 .ToListAsync();
 
-            var result = nhanViens.Select(nv =>
+            IEnumerable<ThongKeTongHopViewModel> result = nhanViens.Select(nv =>
             {
                 var ds = phanCongHoanThanh.Where(x => x.MaNhanVien == nv.MaNhanVien).ToList();
 
@@ -86,8 +105,7 @@ namespace DACS_Nhom19.Controllers
                     TongSoCa = tongSoCa,
                     TongSoGio = tongSoGio,
                     KetQua = (tongSoCa < nv.SoCaToiThieuTuan || tongSoGio < nv.SoGioToiThieuTuan)
-                        ? "Chưa đạt định mức"
-                        : "Đạt định mức"
+                        ? "Chưa đạt định mức" : "Đạt định mức"
                 };
             });
 
@@ -96,12 +114,37 @@ namespace DACS_Nhom19.Controllers
                 result = result.Where(x =>
                     x.MaNhanVienCode.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
                     x.HoTen.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                    x.ChucVu.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                    (x.ChucVu ?? "").Contains(keyword, StringComparison.OrdinalIgnoreCase));
             }
 
-            ViewBag.Keyword = keyword;
+            var page = new ThongKeTongHopPageViewModel
+            {
+                TuNgay = from,
+                DenNgay = to,
+                Keyword = keyword,
+                DanhSach = result.ToList()
+            };
 
-            return View(result.ToList());
+            return View(page);
+        }
+
+        /// <summary>Mặc định = tuần hiện tại (thứ 2 → CN).</summary>
+        private static (DateOnly from, DateOnly to) ResolveRange(DateOnly? tuNgay, DateOnly? denNgay)
+        {
+            if (tuNgay.HasValue && denNgay.HasValue)
+            {
+                var f = tuNgay.Value;
+                var t = denNgay.Value;
+                if (f > t) (f, t) = (t, f);
+                return (f, t);
+            }
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            int diffToMonday = ((int)today.DayOfWeek + 6) % 7;
+            var monday = today.AddDays(-diffToMonday);
+            var sunday = monday.AddDays(6);
+
+            return (tuNgay ?? monday, denNgay ?? sunday);
         }
     }
 }

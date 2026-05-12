@@ -1,39 +1,52 @@
-﻿@model DACS_Nhom19.Models.DangKyCa
-
+@model DACS_Nhom19.Models.DangKyCa
 @{
     ViewData["Title"] = "Chi tiết đăng ký ca";
+
+    var stClass = Model.TrangThai switch
+    {
+        "Chờ duyệt" => "bg-pending",
+        "Đã duyệt" => "bg-approved",
+        "Từ chối" => "bg-rejected",
+        _ => "bg-inactive"
+    };
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Chi tiết đăng ký ca</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-info-circle"></i> Chi tiết đăng ký ca</h2>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+</div>
 
-    <table class="table table-bordered">
-        <tr>
-            <th width="250">Nhân viên</th>
-            <td>@Model.MaNhanVienNavigation.MaNhanVienCode - @Model.MaNhanVienNavigation.HoTen</td>
-        </tr>
-        <tr>
-            <th>Ca làm</th>
-            <td>@Model.MaCaNavigation.TenCa</td>
-        </tr>
-        <tr>
-            <th>Ngày làm</th>
-            <td>@Model.NgayLam.ToString("dd/MM/yyyy")</td>
-        </tr>
-        <tr>
-            <th>Ngày đăng ký</th>
-            <td>@Model.NgayDangKy</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>@Model.TrangThai</td>
-        </tr>
-        <tr>
-            <th>Ghi chú</th>
-            <td>@Model.GhiChu</td>
-        </tr>
-    </table>
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Nhân viên</dt>
+            <dd class="col-sm-9"><strong>@Model.MaNhanVienNavigation.HoTen</strong> (@Model.MaNhanVienNavigation.MaNhanVienCode)</dd>
 
-    <a asp-action="Edit" asp-route-id="@Model.MaDangKy" class="btn btn-warning">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+            <dt class="col-sm-3">Ca làm</dt>
+            <dd class="col-sm-9">@Model.MaCaNavigation.TenCa</dd>
+
+            <dt class="col-sm-3">Ngày làm</dt>
+            <dd class="col-sm-9">@Model.NgayLam.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Đăng ký lúc</dt>
+            <dd class="col-sm-9">@Model.NgayDangKy.ToString("HH:mm dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><span class="badge @stClass">@Model.TrangThai</span></dd>
+
+            <dt class="col-sm-3">Ghi chú</dt>
+            <dd class="col-sm-9">@(Model.GhiChu ?? "-")</dd>
+
+            @if (Model.NguoiDuyet.HasValue)
+            {
+                <dt class="col-sm-3">Người duyệt</dt>
+                <dd class="col-sm-9">@(Model.NguoiDuyetNavigation?.HoTenHienThi ?? "-")</dd>
+
+                <dt class="col-sm-3">Thời điểm duyệt</dt>
+                <dd class="col-sm-9">@(Model.NgayDuyet?.ToString("HH:mm dd/MM/yyyy") ?? "-")</dd>
+            }
+        </dl>
+    </div>
 </div>
