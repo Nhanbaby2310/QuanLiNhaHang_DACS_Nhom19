@@ -1,0 +1,42 @@
+﻿@model DACS_Nhom19.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Xóa nhân viên";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-danger">Xóa nhân viên</h2>
+
+    <div class="alert alert-warning">
+        Bạn có chắc muốn xóa nhân viên này không?
+    </div>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="250">Mã nhân viên</th>
+            <td>@Model.MaNhanVienCode</td>
+        </tr>
+        <tr>
+            <th>Họ tên</th>
+            <td>@Model.HoTen</td>
+        </tr>
+        <tr>
+            <th>Chức vụ</th>
+            <td>@Model.ChucVu</td>
+        </tr>
+        <tr>
+            <th>Số điện thoại</th>
+            <td>@Model.SoDienThoai</td>
+        </tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>@Model.TrangThai</td>
+        </tr>
+    </table>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="MaNhanVien" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>

@@ -1,0 +1,37 @@
+﻿@model DACS_Nhom19.Models.TaiKhoan
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="TenDangNhap" class="form-label">Tên đăng nhập</label>
+        <input asp-for="TenDangNhap" class="form-control" />
+        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="MatKhau" class="form-label">Mật khẩu</label>
+        <input asp-for="MatKhau" class="form-control" />
+        <span asp-validation-for="MatKhau" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="HoTenHienThi" class="form-label">Họ tên hiển thị</label>
+        <input asp-for="HoTenHienThi" class="form-control" />
+        <span asp-validation-for="HoTenHienThi" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="MaVaiTro" class="form-label">Vai trò</label>
+        <select asp-for="MaVaiTro" asp-items="ViewBag.MaVaiTro" class="form-select">
+            <option value="">-- Chọn vai trò --</option>
+        </select>
+        <span asp-validation-for="MaVaiTro" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+        <select asp-for="TrangThai" asp-items="ViewBag.TrangThaiList" class="form-select"></select>
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
+</div>

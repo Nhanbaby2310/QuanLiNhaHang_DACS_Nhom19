@@ -1,0 +1,39 @@
+﻿@model DACS_Nhom19.Models.DangKyCa
+
+@{
+    ViewData["Title"] = "Chi tiết đăng ký ca";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chi tiết đăng ký ca</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="250">Nhân viên</th>
+            <td>@Model.MaNhanVienNavigation.MaNhanVienCode - @Model.MaNhanVienNavigation.HoTen</td>
+        </tr>
+        <tr>
+            <th>Ca làm</th>
+            <td>@Model.MaCaNavigation.TenCa</td>
+        </tr>
+        <tr>
+            <th>Ngày làm</th>
+            <td>@Model.NgayLam.ToString("dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <th>Ngày đăng ký</th>
+            <td>@Model.NgayDangKy</td>
+        </tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>@Model.TrangThai</td>
+        </tr>
+        <tr>
+            <th>Ghi chú</th>
+            <td>@Model.GhiChu</td>
+        </tr>
+    </table>
+
+    <a asp-action="Edit" asp-route-id="@Model.MaDangKy" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

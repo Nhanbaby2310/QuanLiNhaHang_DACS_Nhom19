@@ -1,0 +1,139 @@
+﻿@model IEnumerable<DACS_Nhom19.Models.PhanCongCa>
+
+@{
+    ViewData["Title"] = "Quản lý phân công ca";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Quản lý phân công ca</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <form asp-action="Index" method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo nhân viên / ca..." />
+        </div>
+
+        <div class="col-md-2">
+            <input type="date" name="ngayLam" value="@ViewBag.NgayLam" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <select name="maCa" asp-items="ViewBag.CaLamList" class="form-select">
+                <option value="">-- Chọn ca làm --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="trangThai" class="form-select">
+                <option value="">-- Trạng thái --</option>
+
+                @if (ViewBag.TrangThai == "Đã phân công")
+                {
+                    <option value="Đã phân công" selected>Đã phân công</option>
+                }
+                else
+                {
+                    <option value="Đã phân công">Đã phân công</option>
+                }
+
+                @if (ViewBag.TrangThai == "Đổi ca")
+                {
+                    <option value="Đổi ca" selected>Đổi ca</option>
+                }
+                else
+                {
+                    <option value="Đổi ca">Đổi ca</option>
+                }
+
+                @if (ViewBag.TrangThai == "Nghỉ")
+                {
+                    <option value="Nghỉ" selected>Nghỉ</option>
+                }
+                else
+                {
+                    <option value="Nghỉ">Nghỉ</option>
+                }
+
+                @if (ViewBag.TrangThai == "Đã hủy")
+                {
+                    <option value="Đã hủy" selected>Đã hủy</option>
+                }
+                else
+                {
+                    <option value="Đã hủy">Đã hủy</option>
+                }
+
+                @if (ViewBag.TrangThai == "Hoàn thành")
+                {
+                    <option value="Hoàn thành" selected>Hoàn thành</option>
+                }
+                else
+                {
+                    <option value="Hoàn thành">Hoàn thành</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-success">+ Thêm phân công ca</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Ca làm</th>
+                    <th>Ngày làm</th>
+                    <th>Giờ bắt đầu</th>
+                    <th>Giờ kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                    <th width="220">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.MaNhanVienNavigation.MaNhanVienCode - @item.MaNhanVienNavigation.HoTen</td>
+                        <td>@item.MaCaNavigation.TenCa</td>
+                        <td>@item.NgayLam.ToString("dd/MM/yyyy")</td>
+                        <td>@item.MaCaNavigation.GioBatDau</td>
+                        <td>@item.MaCaNavigation.GioKetThuc</td>
+                        <td>@item.TrangThai</td>
+                        <td>@item.GhiChu</td>
+                        <td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.MaPhanCong" class="btn btn-info btn-sm">Chi tiết</a>
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.MaPhanCong" class="btn btn-warning btn-sm">Sửa</a>
+                                <a asp-action="Delete" asp-route-id="@item.MaPhanCong" class="btn btn-danger btn-sm">Xóa</a>
+
+                                @if (item.TrangThai != "Hoàn thành" && item.TrangThai != "Đã hủy")
+                                {
+                                    <a asp-action="HoanThanh" asp-route-id="@item.MaPhanCong" class="btn btn-success btn-sm">
+                                        Hoàn thành
+                                    </a>
+                                }
+                            }
+                        </td>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

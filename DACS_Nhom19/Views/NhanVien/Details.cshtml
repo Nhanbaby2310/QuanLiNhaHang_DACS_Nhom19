@@ -1,0 +1,75 @@
+﻿@model DACS_Nhom19.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Chi tiết nhân viên";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chi tiết nhân viên</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="250">Mã nhân viên</th>
+            <td>@Model.MaNhanVienCode</td>
+        </tr>
+        <tr>
+            <th>Họ tên</th>
+            <td>@Model.HoTen</td>
+        </tr>
+        <tr>
+            <th>Giới tính</th>
+            <td>@Model.GioiTinh</td>
+        </tr>
+        <tr>
+            <th>Ngày sinh</th>
+            <td>@Model.NgaySinh</td>
+        </tr>
+        <tr>
+            <th>Số điện thoại</th>
+            <td>@Model.SoDienThoai</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <th>Địa chỉ</th>
+            <td>@Model.DiaChi</td>
+        </tr>
+        <tr>
+            <th>Chức vụ</th>
+            <td>@Model.ChucVu</td>
+        </tr>
+        <tr>
+            <th>Loại nhân viên</th>
+            <td>@Model.LoaiNhanVien</td>
+        </tr>
+        <tr>
+            <th>Ngày vào làm</th>
+            <td>@Model.NgayVaoLam</td>
+        </tr>
+        <tr>
+            <th>Số ca tối thiểu/tuần</th>
+            <td>@Model.SoCaToiThieuTuan</td>
+        </tr>
+        <tr>
+            <th>Số giờ tối thiểu/tuần</th>
+            <td>@Model.SoGioToiThieuTuan</td>
+        </tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>@Model.TrangThai</td>
+        </tr>
+        <tr>
+            <th>Tài khoản</th>
+            <td>
+                @(Model.MaTaiKhoanNavigation != null
+                                ? $"{Model.MaTaiKhoanNavigation.TenDangNhap} - {Model.MaTaiKhoanNavigation.HoTenHienThi}"
+                                : "Chưa gắn tài khoản")
+            </td>
+        </tr>
+    </table>
+
+    <a asp-action="Edit" asp-route-id="@Model.MaNhanVien" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

@@ -1,0 +1,39 @@
+﻿@model DACS_Nhom19.Models.TaiKhoan
+
+@{
+    ViewData["Title"] = "Chi tiết tài khoản";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chi tiết tài khoản</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="250">Tên đăng nhập</th>
+            <td>@Model.TenDangNhap</td>
+        </tr>
+        <tr>
+            <th>Họ tên hiển thị</th>
+            <td>@Model.HoTenHienThi</td>
+        </tr>
+        <tr>
+            <th>Vai trò</th>
+            <td>@Model.MaVaiTroNavigation?.TenVaiTro</td>
+        </tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>@Model.TrangThai</td>
+        </tr>
+        <tr>
+            <th>Ngày tạo</th>
+            <td>@Model.NgayTao</td>
+        </tr>
+        <tr>
+            <th>Lần đăng nhập cuối</th>
+            <td>@Model.LanDangNhapCuoi</td>
+        </tr>
+    </table>
+
+    <a asp-action="Edit" asp-route-id="@Model.MaTaiKhoan" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

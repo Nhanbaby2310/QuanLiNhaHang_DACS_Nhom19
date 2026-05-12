@@ -1,0 +1,197 @@
+﻿@model DACS_Nhom19.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Dashboard quản lý nhà hàng</h2>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary shadow">
+                <div class="card-body">
+                    <h5>Tổng nhân viên</h5>
+                    <h2>@Model.TongNhanVien</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <h5>Tổng ca làm</h5>
+                    <h2>@Model.TongCaLam</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body">
+                    <h5>Chờ duyệt</h5>
+                    <h2>@Model.DangKyChoDuyet</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-danger shadow">
+                <div class="card-body">
+                    <h5>Hoàn thành hôm nay</h5>
+                    <h2>@Model.CaHoanThanhHomNay</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+            <div class="card shadow">
+
+                <div class="card-header bg-dark text-white">
+                    Đăng ký ca mới nhất
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th>Nhân viên</th>
+                                <th>Ca</th>
+                                <th>Ngày</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.DangKyMoiNhat)
+                            {
+                                <tr>
+                                    <td>@item.MaNhanVienNavigation.HoTen</td>
+                                    <td>@item.MaCaNavigation.TenCa</td>
+                                    <td>@item.NgayLam</td>
+                                    <td>@item.TrangThai</td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-danger text-white">
+                    Nhân viên chưa đạt định mức
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Số ca</th>
+                                <th>Số giờ</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.NhanVienChuaDat)
+                            {
+                                <tr>
+                                    <td>@item.HoTen</td>
+
+                                    <td>
+                                        @item.SoCaDaLam / @item.SoCaToiThieu
+                                    </td>
+
+                                    <td>
+                                        @item.TongGioLam / @item.SoGioToiThieu
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= BIỂU ĐỒ ================= -->
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header bg-dark text-white">
+            Biểu đồ số ca hoàn thành theo nhân viên
+        </div>
+
+        <div class="card-body">
+            <canvas id="chartCaNhanVien"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= CHART JS ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const labels = @Html.Raw(ViewBag.ChartLabels);
+
+    const data = @Html.Raw(ViewBag.ChartData);
+
+    const ctx = document.getElementById('chartCaNhanVien');
+
+    new Chart(ctx, {
+
+        type: 'bar',
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: 'Số ca hoàn thành',
+                data: data,
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+
+    });
+
+</script>

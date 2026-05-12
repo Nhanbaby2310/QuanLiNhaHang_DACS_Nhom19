@@ -1,0 +1,49 @@
+﻿@model DACS_Nhom19.ViewModels.ThongKeCaNhanViewModel
+
+@{
+    ViewData["Title"] = "Thống kê của tôi";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Thống kê của tôi</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="260">Mã nhân viên</th>
+            <td>@Model.MaNhanVienCode</td>
+        </tr>
+        <tr>
+            <th>Họ tên</th>
+            <td>@Model.HoTen</td>
+        </tr>
+        <tr>
+            <th>Số ca tối thiểu/tuần</th>
+            <td>@Model.SoCaToiThieuTuan</td>
+        </tr>
+        <tr>
+            <th>Số giờ tối thiểu/tuần</th>
+            <td>@Model.SoGioToiThieuTuan</td>
+        </tr>
+        <tr>
+            <th>Tổng số ca hoàn thành</th>
+            <td>@Model.TongSoCa</td>
+        </tr>
+        <tr>
+            <th>Tổng số giờ hoàn thành</th>
+            <td>@Model.TongSoGio</td>
+        </tr>
+        <tr>
+            <th>Kết quả</th>
+            <td>
+                @if (Model.KetQua == "Đạt định mức")
+                {
+                    <span class="badge bg-success">@Model.KetQua</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">@Model.KetQua</span>
+                }
+            </td>
+        </tr>
+    </table>
+</div>

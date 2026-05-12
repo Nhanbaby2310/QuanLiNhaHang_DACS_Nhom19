@@ -1,0 +1,22 @@
+﻿@model DACS_Nhom19.ViewModels.DangKyCaFormViewModel
+
+@{
+    ViewData["Title"] = "Cập nhật đăng ký ca";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Cập nhật đăng ký ca</h2>
+
+    <form asp-action="Edit" asp-route-id="@ViewBag.MaDangKy" method="post">
+        <partial name="_Form" model="Model" />
+
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,45 @@
+﻿@model DACS_Nhom19.ViewModels.DangKyCaFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row">
+    @if (User.IsInRole("Nhân viên"))
+    {
+        <input type="hidden" asp-for="MaNhanVien" value="@ViewBag.CurrentNhanVienId" />
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nhân viên</label>
+            <input class="form-control" value="@ViewBag.CurrentNhanVienText" disabled />
+        </div>
+    }
+    else
+    {
+        <div class="col-md-6 mb-3">
+            <label asp-for="MaNhanVien" class="form-label">Nhân viên</label>
+            <select asp-for="MaNhanVien" asp-items="ViewBag.MaNhanVien" class="form-select">
+                <option value="">-- Chọn nhân viên --</option>
+            </select>
+            <span asp-validation-for="MaNhanVien" class="text-danger"></span>
+        </div>
+    }
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="MaCa" class="form-label">Ca làm</label>
+        <select asp-for="MaCa" asp-items="ViewBag.MaCa" class="form-select">
+            <option value="">-- Chọn ca làm --</option>
+        </select>
+        <span asp-validation-for="MaCa" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="NgayLam" class="form-label">Ngày làm</label>
+        <input asp-for="NgayLam" type="date" class="form-control" />
+        <span asp-validation-for="NgayLam" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-12 mb-3">
+        <label asp-for="GhiChu" class="form-label">Ghi chú</label>
+        <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="GhiChu" class="text-danger"></span>
+    </div>
+</div>

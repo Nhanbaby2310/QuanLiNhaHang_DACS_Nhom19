@@ -1,0 +1,61 @@
+﻿@model IEnumerable<DACS_Nhom19.ViewModels.ThongKeTongHopViewModel>
+
+@{
+    ViewData["Title"] = "Thống kê tổng hợp";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Thống kê tổng hợp nhân viên</h2>
+
+    <form asp-action="TongHop" method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control"
+                   placeholder="Tìm theo mã, họ tên, chức vụ..." />
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            <a asp-action="TongHop" class="btn btn-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã NV</th>
+                    <th>Họ tên</th>
+                    <th>Chức vụ</th>
+                    <th>Định mức ca</th>
+                    <th>Định mức giờ</th>
+                    <th>Tổng số ca</th>
+                    <th>Tổng số giờ</th>
+                    <th>Kết quả</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.MaNhanVienCode</td>
+                        <td>@item.HoTen</td>
+                        <td>@item.ChucVu</td>
+                        <td>@item.SoCaToiThieuTuan</td>
+                        <td>@item.SoGioToiThieuTuan</td>
+                        <td>@item.TongSoCa</td>
+                        <td>@item.TongSoGio</td>
+                        <td>
+                            @if (item.KetQua == "Đạt định mức")
+                            {
+                                <span class="badge bg-success">@item.KetQua</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">@item.KetQua</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

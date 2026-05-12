@@ -1,0 +1,51 @@
+﻿@model DACS_Nhom19.Models.CaLam
+
+@{
+    ViewData["Title"] = "Chi tiết ca làm";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chi tiết ca làm</h2>
+
+    <table class="table table-bordered">
+        <tr>
+            <th width="250">Mã ca</th>
+            <td>@Model.MaCaCode</td>
+        </tr>
+        <tr>
+            <th>Tên ca</th>
+            <td>@Model.TenCa</td>
+        </tr>
+        <tr>
+            <th>Giờ bắt đầu</th>
+            <td>@Model.GioBatDau</td>
+        </tr>
+        <tr>
+            <th>Giờ kết thúc</th>
+            <td>@Model.GioKetThuc</td>
+        </tr>
+        <tr>
+            <th>Loại ca</th>
+            <td>@Model.LoaiCa</td>
+        </tr>
+        <tr>
+            <th>Số lượng tối thiểu</th>
+            <td>@Model.SoLuongNhanVienToiThieu</td>
+        </tr>
+        <tr>
+            <th>Số lượng tối đa</th>
+            <td>@Model.SoLuongNhanVienToiDa</td>
+        </tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>@Model.TrangThai</td>
+        </tr>
+        <tr>
+            <th>Ghi chú</th>
+            <td>@Model.GhiChu</td>
+        </tr>
+    </table>
+
+    <a asp-action="Edit" asp-route-id="@Model.MaCa" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

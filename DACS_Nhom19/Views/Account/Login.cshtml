@@ -1,0 +1,38 @@
+﻿@model DACS_Nhom19.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Đăng nhập hệ thống</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="TenDangNhap" class="form-label">Tên đăng nhập</label>
+                    <input asp-for="TenDangNhap" class="form-control" />
+                    <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MatKhau" class="form-label">Mật khẩu</label>
+                    <input asp-for="MatKhau" type="password" class="form-control" />
+                    <span asp-validation-for="MatKhau" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

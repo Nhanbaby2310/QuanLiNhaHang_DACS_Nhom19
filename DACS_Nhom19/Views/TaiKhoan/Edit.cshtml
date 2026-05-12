@@ -1,0 +1,26 @@
+﻿@model DACS_Nhom19.Models.TaiKhoan
+
+@{
+    ViewData["Title"] = "Cập nhật tài khoản";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Cập nhật tài khoản</h2>
+
+    <form asp-action="Edit" asp-route-id="@Model.MaTaiKhoan" method="post">
+        <input type="hidden" asp-for="MaTaiKhoan" />
+        <input type="hidden" asp-for="NgayTao" />
+        <input type="hidden" asp-for="LanDangNhapCuoi" />
+
+        <partial name="_Form" model="Model" />
+
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

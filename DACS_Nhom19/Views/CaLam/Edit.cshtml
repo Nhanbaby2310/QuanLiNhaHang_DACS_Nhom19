@@ -1,0 +1,23 @@
+﻿@model DACS_Nhom19.Models.CaLam
+
+@{
+    ViewData["Title"] = "Cập nhật ca làm";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Cập nhật ca làm</h2>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="MaCa" />
+        <partial name="_Form" model="Model" />
+
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
