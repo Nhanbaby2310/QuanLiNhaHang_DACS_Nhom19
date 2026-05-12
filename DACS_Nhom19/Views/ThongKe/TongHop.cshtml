@@ -1,56 +1,118 @@
-﻿@model IEnumerable<DACS_Nhom19.ViewModels.ThongKeTongHopViewModel>
-
+@model DACS_Nhom19.ViewModels.ThongKeTongHopPageViewModel
 @{
     ViewData["Title"] = "Thống kê tổng hợp";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Thống kê tổng hợp nhân viên</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-bar-chart-line-fill"></i> Thống kê tổng hợp</h2>
+        <p class="page-subtitle">
+            Khoảng: @Model.TuNgay.ToString("dd/MM/yyyy") - @Model.DenNgay.ToString("dd/MM/yyyy")
+        </p>
+    </div>
+</div>
 
-    <form asp-action="TongHop" method="get" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control"
-                   placeholder="Tìm theo mã, họ tên, chức vụ..." />
-        </div>
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-            <a asp-action="TongHop" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="TongHop" method="get" class="row g-2">
+            <div class="col-md-3">
+                <label class="form-label small">Từ ngày</label>
+                <input type="date" name="tuNgay" value="@Model.TuNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Đến ngày</label>
+                <input type="date" name="denNgay" value="@Model.DenNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small">Tìm kiếm</label>
+                <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Mã NV / họ tên / chức vụ..." />
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="TongHop" class="btn btn-outline-secondary" title="Tuần này"><i class="bi bi-arrow-clockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
 
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="stat-card bg-gd-4">
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <div class="stat-label">Tổng nhân viên</div>
+                <div class="stat-value">@Model.TongNhanVien</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card bg-gd-2">
+            <div class="stat-icon"><i class="bi bi-check2-all"></i></div>
+            <div>
+                <div class="stat-label">Đạt định mức</div>
+                <div class="stat-value">@Model.TongDat</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card bg-gd-1">
+            <div class="stat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <div>
+                <div class="stat-label">Chưa đạt</div>
+                <div class="stat-value">@Model.TongChuaDat</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Mã NV</th>
                     <th>Họ tên</th>
                     <th>Chức vụ</th>
-                    <th>Định mức ca</th>
-                    <th>Định mức giờ</th>
-                    <th>Tổng số ca</th>
-                    <th>Tổng số giờ</th>
+                    <th class="text-center">Định mức</th>
+                    <th class="text-center">Số ca</th>
+                    <th class="text-center">Số giờ</th>
                     <th>Kết quả</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @if (!Model.DanhSach.Any())
                 {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                }
+                @foreach (var item in Model.DanhSach)
+                {
+                    bool dat = item.KetQua == "Đạt định mức";
                     <tr>
-                        <td>@item.MaNhanVienCode</td>
-                        <td>@item.HoTen</td>
+                        <td><code>@item.MaNhanVienCode</code></td>
+                        <td><strong>@item.HoTen</strong></td>
                         <td>@item.ChucVu</td>
-                        <td>@item.SoCaToiThieuTuan</td>
-                        <td>@item.SoGioToiThieuTuan</td>
-                        <td>@item.TongSoCa</td>
-                        <td>@item.TongSoGio</td>
+                        <td class="text-center small">
+                            <div>@item.SoCaToiThieuTuan ca</div>
+                            <div class="text-muted">@item.SoGioToiThieuTuan giờ</div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge @(item.TongSoCa >= item.SoCaToiThieuTuan ? "bg-active" : "bg-rejected")">
+                                @item.TongSoCa
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge @(item.TongSoGio >= item.SoGioToiThieuTuan ? "bg-active" : "bg-rejected")">
+                                @item.TongSoGio.ToString("0.##")
+                            </span>
+                        </td>
                         <td>
-                            @if (item.KetQua == "Đạt định mức")
+                            @if (dat)
                             {
-                                <span class="badge bg-success">@item.KetQua</span>
+                                <span class="badge bg-active"><i class="bi bi-check-circle"></i> Đạt</span>
                             }
                             else
                             {
-                                <span class="badge bg-danger">@item.KetQua</span>
+                                <span class="badge bg-rejected"><i class="bi bi-x-circle"></i> Chưa đạt</span>
                             }
                         </td>
                     </tr>

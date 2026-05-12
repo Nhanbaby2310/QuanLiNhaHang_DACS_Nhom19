@@ -1,37 +1,43 @@
-﻿@model DACS_Nhom19.Models.TaiKhoan
+@model DACS_Nhom19.Models.TaiKhoan
+@{
+    bool isEdit = Model?.MaTaiKhoan > 0;
+}
 
-<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div asp-validation-summary="All" class="alert alert-danger py-2" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label asp-for="TenDangNhap" class="form-label">Tên đăng nhập</label>
-        <input asp-for="TenDangNhap" class="form-control" />
-        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="TenDangNhap" class="form-label"><i class="bi bi-person"></i> Tên đăng nhập</label>
+        <input asp-for="TenDangNhap" class="form-control" autocomplete="off" />
+        <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="MatKhau" class="form-label">Mật khẩu</label>
-        <input asp-for="MatKhau" class="form-control" />
-        <span asp-validation-for="MatKhau" class="text-danger"></span>
+    <div class="col-md-6">
+        <label asp-for="MatKhau" class="form-label">
+            <i class="bi bi-lock"></i> @(isEdit ? "Mật khẩu mới (để trống nếu không đổi)" : "Mật khẩu")
+        </label>
+        <input asp-for="MatKhau" type="password" class="form-control" autocomplete="new-password" />
+        <span asp-validation-for="MatKhau" class="text-danger small"></span>
+        <small class="text-muted">Tối thiểu 6 ký tự. Sẽ được mã hóa trước khi lưu.</small>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="HoTenHienThi" class="form-label">Họ tên hiển thị</label>
         <input asp-for="HoTenHienThi" class="form-control" />
-        <span asp-validation-for="HoTenHienThi" class="text-danger"></span>
+        <span asp-validation-for="HoTenHienThi" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="MaVaiTro" class="form-label">Vai trò</label>
+    <div class="col-md-6">
+        <label asp-for="MaVaiTro" class="form-label"><i class="bi bi-person-badge"></i> Vai trò</label>
         <select asp-for="MaVaiTro" asp-items="ViewBag.MaVaiTro" class="form-select">
             <option value="">-- Chọn vai trò --</option>
         </select>
-        <span asp-validation-for="MaVaiTro" class="text-danger"></span>
+        <span asp-validation-for="MaVaiTro" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="TrangThai" class="form-label">Trạng thái</label>
         <select asp-for="TrangThai" asp-items="ViewBag.TrangThaiList" class="form-select"></select>
-        <span asp-validation-for="TrangThai" class="text-danger"></span>
+        <span asp-validation-for="TrangThai" class="text-danger small"></span>
     </div>
 </div>

@@ -1,38 +1,32 @@
-﻿@model DACS_Nhom19.Models.TaiKhoan
-
+@model DACS_Nhom19.Models.TaiKhoan
 @{
     ViewData["Title"] = "Xóa tài khoản";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-danger">Xóa tài khoản</h2>
-
-    <div class="alert alert-warning">
-        Bạn có chắc muốn xóa tài khoản này không?
+<div class="page-header">
+    <div>
+        <h2 class="page-title text-danger"><i class="bi bi-trash"></i> Xóa tài khoản</h2>
     </div>
-
-    <table class="table table-bordered">
-        <tr>
-            <th width="250">Tên đăng nhập</th>
-            <td>@Model.TenDangNhap</td>
-        </tr>
-        <tr>
-            <th>Họ tên hiển thị</th>
-            <td>@Model.HoTenHienThi</td>
-        </tr>
-        <tr>
-            <th>Vai trò</th>
-            <td>@Model.MaVaiTroNavigation?.TenVaiTro</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>@Model.TrangThai</td>
-        </tr>
-    </table>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="MaTaiKhoan" />
-        <button type="submit" class="btn btn-danger">Xóa</button>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-    </form>
 </div>
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill"></i> Bạn có chắc muốn xóa tài khoản này không?
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tên đăng nhập</dt><dd class="col-sm-9"><code>@Model.TenDangNhap</code></dd>
+            <dt class="col-sm-3">Họ tên hiển thị</dt><dd class="col-sm-9">@Model.HoTenHienThi</dd>
+            <dt class="col-sm-3">Vai trò</dt><dd class="col-sm-9">@Model.MaVaiTroNavigation?.TenVaiTro</dd>
+            <dt class="col-sm-3">Trạng thái</dt><dd class="col-sm-9">@Model.TrangThai</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="MaTaiKhoan" />
+    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+</form>

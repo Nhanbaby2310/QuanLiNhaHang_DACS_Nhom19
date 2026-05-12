@@ -1,9 +1,9 @@
-﻿using DACS_Nhom19.Data;
+using DACS_Nhom19.Data;
 using DACS_Nhom19.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DACS_Nhom19.Controllers
 {
@@ -17,12 +17,9 @@ namespace DACS_Nhom19.Controllers
             _context = context;
         }
 
-        // DANH SÁCH
         public async Task<IActionResult> Index(string keyword, string loaiNhanVien, string trangThai)
         {
-            var query = _context.NhanViens
-                .Include(n => n.MaTaiKhoanNavigation)
-                .AsQueryable();
+            var query = _context.NhanViens.Include(n => n.MaTaiKhoanNavigation).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -34,27 +31,19 @@ namespace DACS_Nhom19.Controllers
             }
 
             if (!string.IsNullOrWhiteSpace(loaiNhanVien))
-            {
                 query = query.Where(n => n.LoaiNhanVien == loaiNhanVien);
-            }
 
             if (!string.IsNullOrWhiteSpace(trangThai))
-            {
                 query = query.Where(n => n.TrangThai == trangThai);
-            }
 
             ViewBag.Keyword = keyword;
             ViewBag.LoaiNhanVien = loaiNhanVien;
             ViewBag.TrangThai = trangThai;
 
-            var data = await query
-                .OrderBy(n => n.MaNhanVien)
-                .ToListAsync();
-
+            var data = await query.OrderBy(n => n.MaNhanVien).ToListAsync();
             return View(data);
         }
 
-        // CHI TIẾT
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -64,11 +53,9 @@ namespace DACS_Nhom19.Controllers
                 .FirstOrDefaultAsync(m => m.MaNhanVien == id);
 
             if (nhanVien == null) return NotFound();
-
             return View(nhanVien);
         }
 
-        // GET: CREATE
         public async Task<IActionResult> Create()
         {
             await LoadTaiKhoanDropdown();
@@ -76,13 +63,11 @@ namespace DACS_Nhom19.Controllers
             return View();
         }
 
-        // POST: CREATE
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MaNhanVienCode,HoTen,GioiTinh,NgaySinh,SoDienThoai,Email,DiaChi,ChucVu,LoaiNhanVien,NgayVaoLam,SoCaToiThieuTuan,SoGioToiThieuTuan,TrangThai,MaTaiKhoan")] NhanVien nhanVien)
         {
             ModelState.Remove("MaTaiKhoanNavigation");
-
             await ValidateNhanVien(nhanVien);
 
             if (ModelState.IsValid)
@@ -98,7 +83,6 @@ namespace DACS_Nhom19.Controllers
             return View(nhanVien);
         }
 
-        // GET: EDIT
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -108,11 +92,9 @@ namespace DACS_Nhom19.Controllers
 
             await LoadTaiKhoanDropdown(nhanVien.MaTaiKhoan, nhanVien.MaNhanVien);
             LoadDanhMuc();
-
             return View(nhanVien);
         }
 
-        // POST: EDIT
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MaNhanVien,MaNhanVienCode,HoTen,GioiTinh,NgaySinh,SoDienThoai,Email,DiaChi,ChucVu,LoaiNhanVien,NgayVaoLam,SoCaToiThieuTuan,SoGioToiThieuTuan,TrangThai,MaTaiKhoan")] NhanVien nhanVien)
@@ -120,7 +102,6 @@ namespace DACS_Nhom19.Controllers
             if (id != nhanVien.MaNhanVien) return NotFound();
 
             ModelState.Remove("MaTaiKhoanNavigation");
-
             await ValidateNhanVien(nhanVien, nhanVien.MaNhanVien);
 
             if (ModelState.IsValid)
@@ -134,10 +115,8 @@ namespace DACS_Nhom19.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NhanVienExists(nhanVien.MaNhanVien))
-                        return NotFound();
-                    else
-                        throw;
+                    if (!NhanVienExists(nhanVien.MaNhanVien)) return NotFound();
+                    throw;
                 }
             }
 
@@ -146,7 +125,6 @@ namespace DACS_Nhom19.Controllers
             return View(nhanVien);
         }
 
-        // GET: DELETE
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -156,65 +134,63 @@ namespace DACS_Nhom19.Controllers
                 .FirstOrDefaultAsync(m => m.MaNhanVien == id);
 
             if (nhanVien == null) return NotFound();
-
             return View(nhanVien);
         }
 
-        // POST: DELETE
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var nhanVien = await _context.NhanViens.FindAsync(id);
-            if (nhanVien != null)
+            if (nhanVien == null)
+            {
+                TempData["Error"] = "Nhân viên không tồn tại.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool dangDung = await _context.PhanCongCas.AnyAsync(x => x.MaNhanVien == id)
+                         || await _context.DangKyCas.AnyAsync(x => x.MaNhanVien == id);
+
+            if (dangDung)
+            {
+                TempData["Error"] = $"Không thể xóa nhân viên '{nhanVien.HoTen}' vì đã có phân công hoặc đăng ký ca. Hãy chuyển trạng thái sang 'Nghỉ việc' thay vì xóa.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 _context.NhanViens.Remove(nhanVien);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Xóa nhân viên thành công.";
             }
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = "Không thể xóa nhân viên do đang được tham chiếu ở bảng khác.";
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private bool NhanVienExists(int id)
-        {
-            return _context.NhanViens.Any(e => e.MaNhanVien == id);
-        }
+        private bool NhanVienExists(int id) => _context.NhanViens.Any(e => e.MaNhanVien == id);
 
         private async Task ValidateNhanVien(NhanVien nhanVien, int? currentId = null)
         {
-            if (await _context.NhanViens.AnyAsync(x =>
-                x.MaNhanVienCode == nhanVien.MaNhanVienCode &&
-                x.MaNhanVien != currentId))
-            {
+            if (await _context.NhanViens.AnyAsync(x => x.MaNhanVienCode == nhanVien.MaNhanVienCode && x.MaNhanVien != currentId))
                 ModelState.AddModelError("MaNhanVienCode", "Mã nhân viên đã tồn tại.");
-            }
 
-            if (await _context.NhanViens.AnyAsync(x =>
-                x.SoDienThoai == nhanVien.SoDienThoai &&
-                x.MaNhanVien != currentId))
-            {
+            if (await _context.NhanViens.AnyAsync(x => x.SoDienThoai == nhanVien.SoDienThoai && x.MaNhanVien != currentId))
                 ModelState.AddModelError("SoDienThoai", "Số điện thoại đã tồn tại.");
-            }
 
             if (!string.IsNullOrWhiteSpace(nhanVien.Email))
             {
-                if (await _context.NhanViens.AnyAsync(x =>
-                    x.Email == nhanVien.Email &&
-                    x.MaNhanVien != currentId))
-                {
+                if (await _context.NhanViens.AnyAsync(x => x.Email == nhanVien.Email && x.MaNhanVien != currentId))
                     ModelState.AddModelError("Email", "Email đã tồn tại.");
-                }
             }
 
             if (nhanVien.MaTaiKhoan.HasValue)
             {
-                if (await _context.NhanViens.AnyAsync(x =>
-                    x.MaTaiKhoan == nhanVien.MaTaiKhoan &&
-                    x.MaNhanVien != currentId))
-                {
+                if (await _context.NhanViens.AnyAsync(x => x.MaTaiKhoan == nhanVien.MaTaiKhoan && x.MaNhanVien != currentId))
                     ModelState.AddModelError("MaTaiKhoan", "Tài khoản này đã được gắn cho nhân viên khác.");
-                }
             }
         }
 
@@ -232,11 +208,7 @@ namespace DACS_Nhom19.Controllers
 
             var data = taiKhoans
                 .Where(t => !usedAccountIds.Contains(t.MaTaiKhoan) || t.MaTaiKhoan == selectedId)
-                .Select(t => new
-                {
-                    t.MaTaiKhoan,
-                    HienThi = t.TenDangNhap + " - " + t.HoTenHienThi
-                })
+                .Select(t => new { t.MaTaiKhoan, HienThi = t.TenDangNhap + " - " + t.HoTenHienThi })
                 .ToList();
 
             ViewBag.MaTaiKhoan = new SelectList(data, "MaTaiKhoan", "HienThi", selectedId);

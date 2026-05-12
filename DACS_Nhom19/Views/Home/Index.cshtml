@@ -1,197 +1,251 @@
-﻿@model DACS_Nhom19.ViewModels.DashboardViewModel
-
+@model DACS_Nhom19.ViewModels.DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="container mt-4">
-
-    <h2 class="mb-4">Dashboard quản lý nhà hàng</h2>
-
-    <div class="row">
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-white bg-primary shadow">
-                <div class="card-body">
-                    <h5>Tổng nhân viên</h5>
-                    <h2>@Model.TongNhanVien</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-white bg-success shadow">
-                <div class="card-body">
-                    <h5>Tổng ca làm</h5>
-                    <h2>@Model.TongCaLam</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-white bg-warning shadow">
-                <div class="card-body">
-                    <h5>Chờ duyệt</h5>
-                    <h2>@Model.DangKyChoDuyet</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-white bg-danger shadow">
-                <div class="card-body">
-                    <h5>Hoàn thành hôm nay</h5>
-                    <h2>@Model.CaHoanThanhHomNay</h2>
-                </div>
-            </div>
-        </div>
-
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-speedometer2"></i> Dashboard quản lý</h2>
+        <p class="page-subtitle">
+            Tuần hiện tại: @Model.TuNgay.ToString("dd/MM/yyyy") - @Model.DenNgay.ToString("dd/MM/yyyy")
+        </p>
     </div>
-
-    <div class="row mt-4">
-
-        <div class="col-md-6">
-            <div class="card shadow">
-
-                <div class="card-header bg-dark text-white">
-                    Đăng ký ca mới nhất
-                </div>
-
-                <div class="card-body">
-
-                    <table class="table table-bordered">
-
-                        <thead>
-                            <tr>
-                                <th>Nhân viên</th>
-                                <th>Ca</th>
-                                <th>Ngày</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach (var item in Model.DangKyMoiNhat)
-                            {
-                                <tr>
-                                    <td>@item.MaNhanVienNavigation.HoTen</td>
-                                    <td>@item.MaCaNavigation.TenCa</td>
-                                    <td>@item.NgayLam</td>
-                                    <td>@item.TrangThai</td>
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-        </div>
-
-        <div class="col-md-6">
-
-            <div class="card shadow">
-
-                <div class="card-header bg-danger text-white">
-                    Nhân viên chưa đạt định mức
-                </div>
-
-                <div class="card-body">
-
-                    <table class="table table-bordered">
-
-                        <thead>
-                            <tr>
-                                <th>Họ tên</th>
-                                <th>Số ca</th>
-                                <th>Số giờ</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach (var item in Model.NhanVienChuaDat)
-                            {
-                                <tr>
-                                    <td>@item.HoTen</td>
-
-                                    <td>
-                                        @item.SoCaDaLam / @item.SoCaToiThieu
-                                    </td>
-
-                                    <td>
-                                        @item.TongGioLam / @item.SoGioToiThieu
-                                    </td>
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ================= BIỂU ĐỒ ================= -->
-
-    <div class="card shadow mt-4">
-
-        <div class="card-header bg-dark text-white">
-            Biểu đồ số ca hoàn thành theo nhân viên
-        </div>
-
-        <div class="card-body">
-            <canvas id="chartCaNhanVien"></canvas>
-        </div>
-
-    </div>
-
 </div>
 
-<!-- ================= CHART JS ================= -->
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-1">
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <div class="stat-label">Nhân viên</div>
+                <div class="stat-value">@Model.TongNhanVien</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-2">
+            <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+            <div>
+                <div class="stat-label">Ca làm đang hoạt động</div>
+                <div class="stat-value">@Model.TongCaLam</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-3">
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="stat-label">Đăng ký chờ duyệt</div>
+                <div class="stat-value">@Model.DangKyChoDuyet</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-4">
+            <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+            <div>
+                <div class="stat-label">Hoàn thành hôm nay</div>
+                <div class="stat-value">@Model.CaHoanThanhHomNay</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-bar-chart-fill"></i> Số ca hoàn thành theo nhân viên (tuần này)</span>
+                <a asp-controller="ThongKe" asp-action="TongHop" class="btn btn-sm btn-accent">
+                    <i class="bi bi-arrow-right"></i> Chi tiết
+                </a>
+            </div>
+            <div class="card-body">
+                <canvas id="chartNhanVien" height="110"></canvas>
+            </div>
+        </div>
+    </div>
 
-<script>
-
-    const labels = @Html.Raw(ViewBag.ChartLabels);
-
-    const data = @Html.Raw(ViewBag.ChartData);
-
-    const ctx = document.getElementById('chartCaNhanVien');
-
-    new Chart(ctx, {
-
-        type: 'bar',
-
-        data: {
-            labels: labels,
-
-            datasets: [{
-                label: 'Số ca hoàn thành',
-                data: data,
-                borderWidth: 1
-            }]
-        },
-
-        options: {
-            responsive: true,
-
-            scales: {
-                y: {
-                    beginAtZero: true
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-calendar-day"></i> Phân công hôm nay
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.PhanCongHomNay.Any())
+                {
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                        <div class="mt-2">Không có phân công nào hôm nay</div>
+                    </div>
                 }
-            }
+                else
+                {
+                    <div class="table-responsive" style="max-height: 320px;">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nhân viên</th>
+                                    <th>Ca</th>
+                                    <th>Giờ</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.PhanCongHomNay)
+                                {
+                                    var cls = p.TrangThai switch
+                                    {
+                                        "Hoàn thành" => "bg-done",
+                                        "Đã hủy" => "bg-canceled",
+                                        _ => "bg-assigned"
+                                    };
+                                    <tr>
+                                        <td>@p.MaNhanVienNavigation.HoTen</td>
+                                        <td>@p.MaCaNavigation.TenCa</td>
+                                        <td class="small text-muted">
+                                            @p.MaCaNavigation.GioBatDau.ToString("HH:mm") - @p.MaCaNavigation.GioKetThuc.ToString("HH:mm")
+                                        </td>
+                                        <td><span class="badge @cls">@p.TrangThai</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-pencil-square"></i> Đăng ký ca mới nhất</span>
+                <a asp-controller="DangKyCa" asp-action="Index" class="btn btn-sm btn-accent">
+                    <i class="bi bi-arrow-right"></i> Xem tất cả
+                </a>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.DangKyMoiNhat.Any())
+                {
+                    <div class="p-4 text-center text-muted">Chưa có đăng ký nào.</div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nhân viên</th>
+                                    <th>Ca</th>
+                                    <th>Ngày</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.DangKyMoiNhat)
+                                {
+                                    var cls = item.TrangThai switch
+                                    {
+                                        "Chờ duyệt" => "bg-pending",
+                                        "Đã duyệt" => "bg-approved",
+                                        "Từ chối" => "bg-rejected",
+                                        _ => "bg-inactive"
+                                    };
+                                    <tr>
+                                        <td>@item.MaNhanVienNavigation.HoTen</td>
+                                        <td>@item.MaCaNavigation.TenCa</td>
+                                        <td>@item.NgayLam.ToString("dd/MM/yyyy")</td>
+                                        <td><span class="badge @cls">@item.TrangThai</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                Nhân viên chưa đạt định mức tuần
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.NhanVienChuaDat.Any())
+                {
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-emoji-smile" style="font-size: 2rem; color: #28a745;"></i>
+                        <div class="mt-2">Tất cả nhân viên đều đạt định mức!</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive" style="max-height: 320px;">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Họ tên</th>
+                                    <th class="text-center">Số ca</th>
+                                    <th class="text-center">Số giờ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.NhanVienChuaDat)
+                                {
+                                    <tr>
+                                        <td>@item.HoTen</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-rejected">@item.SoCaDaLam / @item.SoCaToiThieu</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-rejected">@item.TongGioLam.ToString("0.##") / @item.SoGioToiThieu</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = @Html.Raw(ViewBag.ChartLabels ?? "[]");
+        const data = @Html.Raw(ViewBag.ChartData ?? "[]");
+
+        const ctx = document.getElementById('chartNhanVien');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Số ca hoàn thành',
+                        data: data,
+                        backgroundColor: 'rgba(123, 31, 39, 0.85)',
+                        borderColor: '#7b1f27',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
+                    }
+                }
+            });
         }
-
-    });
-
-</script>
+    </script>
+}

@@ -1,59 +1,59 @@
-﻿@model DACS_Nhom19.Models.CaLam
+@model DACS_Nhom19.Models.CaLam
 
-<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
+<div class="row g-3">
+    <div class="col-md-6">
         <label asp-for="MaCaCode" class="form-label">Mã ca</label>
-        <input asp-for="MaCaCode" class="form-control" />
-        <span asp-validation-for="MaCaCode" class="text-danger"></span>
+        <input asp-for="MaCaCode" class="form-control" placeholder="VD: CA_SANG" />
+        <span asp-validation-for="MaCaCode" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="TenCa" class="form-label">Tên ca</label>
-        <input asp-for="TenCa" class="form-control" />
-        <span asp-validation-for="TenCa" class="text-danger"></span>
+        <input asp-for="TenCa" class="form-control" placeholder="VD: Ca sáng" />
+        <span asp-validation-for="TenCa" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
-        <label asp-for="GioBatDau" class="form-label">Giờ bắt đầu</label>
+    <div class="col-md-4">
+        <label asp-for="GioBatDau" class="form-label"><i class="bi bi-clock"></i> Giờ bắt đầu</label>
         <input asp-for="GioBatDau" type="time" class="form-control" />
-        <span asp-validation-for="GioBatDau" class="text-danger"></span>
+        <span asp-validation-for="GioBatDau" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
-        <label asp-for="GioKetThuc" class="form-label">Giờ kết thúc</label>
+    <div class="col-md-4">
+        <label asp-for="GioKetThuc" class="form-label"><i class="bi bi-clock-history"></i> Giờ kết thúc</label>
         <input asp-for="GioKetThuc" type="time" class="form-control" />
-        <span asp-validation-for="GioKetThuc" class="text-danger"></span>
+        <span asp-validation-for="GioKetThuc" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4">
         <label asp-for="LoaiCa" class="form-label">Loại ca</label>
         <select asp-for="LoaiCa" asp-items="ViewBag.LoaiCaList" class="form-select"></select>
-        <span asp-validation-for="LoaiCa" class="text-danger"></span>
+        <span asp-validation-for="LoaiCa" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="SoLuongNhanVienToiThieu" class="form-label">Số lượng nhân viên tối thiểu</label>
-        <input asp-for="SoLuongNhanVienToiThieu" class="form-control" />
-        <span asp-validation-for="SoLuongNhanVienToiThieu" class="text-danger"></span>
+    <div class="col-md-4">
+        <label asp-for="SoLuongNhanVienToiThieu" class="form-label">Nhân viên tối thiểu</label>
+        <input asp-for="SoLuongNhanVienToiThieu" type="number" min="1" class="form-control" />
+        <span asp-validation-for="SoLuongNhanVienToiThieu" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="SoLuongNhanVienToiDa" class="form-label">Số lượng nhân viên tối đa</label>
-        <input asp-for="SoLuongNhanVienToiDa" class="form-control" />
-        <span asp-validation-for="SoLuongNhanVienToiDa" class="text-danger"></span>
+    <div class="col-md-4">
+        <label asp-for="SoLuongNhanVienToiDa" class="form-label">Nhân viên tối đa</label>
+        <input asp-for="SoLuongNhanVienToiDa" type="number" min="1" class="form-control" />
+        <span asp-validation-for="SoLuongNhanVienToiDa" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4">
         <label asp-for="TrangThai" class="form-label">Trạng thái</label>
         <select asp-for="TrangThai" asp-items="ViewBag.TrangThaiList" class="form-select"></select>
-        <span asp-validation-for="TrangThai" class="text-danger"></span>
+        <span asp-validation-for="TrangThai" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-12 mb-3">
+    <div class="col-12">
         <label asp-for="GhiChu" class="form-label">Ghi chú</label>
         <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="GhiChu" class="text-danger"></span>
+        <span asp-validation-for="GhiChu" class="text-danger small"></span>
     </div>
 </div>
