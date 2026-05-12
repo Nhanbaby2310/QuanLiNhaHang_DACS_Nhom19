@@ -15,4 +15,17 @@
 
         public string KetQua { get; set; } = string.Empty;
     }
+
+    public class ThongKeTongHopPageViewModel
+    {
+        public DateOnly TuNgay { get; set; }
+        public DateOnly DenNgay { get; set; }
+        public string? Keyword { get; set; }
+        public List<ThongKeTongHopViewModel> DanhSach { get; set; } = new();
+
+        // Tổng quát
+        public int TongNhanVien => DanhSach.Count;
+        public int TongDat => DanhSach.Count(x => x.KetQua == "Đạt định mức");
+        public int TongChuaDat => DanhSach.Count(x => x.KetQua == "Chưa đạt định mức");
+    }
 }

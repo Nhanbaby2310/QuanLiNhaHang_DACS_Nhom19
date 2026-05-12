@@ -1,87 +1,54 @@
 ﻿@model IEnumerable<DACS_Nhom19.Models.NhanVien>
-
 @{
     ViewData["Title"] = "Quản lý nhân viên";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Quản lý nhân viên</h2>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    <form asp-action="Index" method="get" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo mã, tên, SĐT, chức vụ..." />
-        </div>
-        <div class="col-md-3">
-            <select name="loaiNhanVien" class="form-select">
-                <option value="">-- Loại nhân viên --</option>
-                @if (ViewBag.LoaiNhanVien == "Full-time")
-                {
-                    <option value="Full-time" selected>Full-time</option>
-                }
-                else
-                {
-                    <option value="Full-time">Full-time</option>
-                }
-
-                @if (ViewBag.LoaiNhanVien == "Part-time")
-                {
-                    <option value="Part-time" selected>Part-time</option>
-                }
-                else
-                {
-                    <option value="Part-time">Part-time</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="trangThai" class="form-select">
-                <option value="">-- Trạng thái --</option>
-                @if (ViewBag.TrangThai == "Đang làm")
-                {
-                    <option value="Đang làm" selected>Đang làm</option>
-                }
-                else
-                {
-                    <option value="Đang làm">Đang làm</option>
-                }
-
-                @if (ViewBag.TrangThai == "Nghỉ phép")
-                {
-                    <option value="Nghỉ phép" selected>Nghỉ phép</option>
-                }
-                else
-                {
-                    <option value="Nghỉ phép">Nghỉ phép</option>
-                }
-
-                @if (ViewBag.TrangThai == "Nghỉ việc")
-                {
-                    <option value="Nghỉ việc" selected>Nghỉ việc</option>
-                }
-                else
-                {
-                    <option value="Nghỉ việc">Nghỉ việc</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
-
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-success">+ Thêm nhân viên</a>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-people-fill"></i> Quản lý nhân viên</h2>
+        <p class="page-subtitle">Tổng @Model.Count() nhân viên</p>
     </div>
+    <a asp-action="Create" class="btn btn-accent">
+        <i class="bi bi-plus-lg"></i> Thêm nhân viên
+    </a>
+</div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo mã, tên, SĐT, chức vụ..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="loaiNhanVien" class="form-select">
+                    <option value="">-- Loại nhân viên --</option>
+                    <option value="Full-time" selected="@(ViewBag.LoaiNhanVien == "Full-time")">Full-time</option>
+                    <option value="Part-time" selected="@(ViewBag.LoaiNhanVien == "Part-time")">Part-time</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="Đang làm" selected="@(ViewBag.TrangThai == "Đang làm")">Đang làm</option>
+                    <option value="Nghỉ phép" selected="@(ViewBag.TrangThai == "Nghỉ phép")">Nghỉ phép</option>
+                    <option value="Nghỉ việc" selected="@(ViewBag.TrangThai == "Nghỉ việc")">Nghỉ việc</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-x-circle"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Mã NV</th>
                     <th>Họ tên</th>
@@ -89,39 +56,109 @@
                     <th>SĐT</th>
                     <th>Chức vụ</th>
                     <th>Loại</th>
-                    <th>Định mức ca/tuần</th>
-                    <th>Định mức giờ/tuần</th>
+                    <th class="text-center">Định mức</th>
                     <th>Trạng thái</th>
                     <th>Tài khoản</th>
-                    <th width="220">Thao tác</th>
+                    <th class="text-end" style="width: 170px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var stClass = item.TrangThai switch
+                    {
+                        "Đang làm" => "bg-active",
+                        "Nghỉ phép" => "bg-pending",
+                        "Nghỉ việc" => "bg-inactive",
+                        _ => "bg-inactive"
+                    };
                     <tr>
-                        <td>@item.MaNhanVienCode</td>
-                        <td>@item.HoTen</td>
+                        <td><code>@item.MaNhanVienCode</code></td>
+                        <td>
+                            <div><strong>@item.HoTen</strong></div>
+                            <small class="text-muted">@item.Email</small>
+                        </td>
                         <td>@item.GioiTinh</td>
                         <td>@item.SoDienThoai</td>
                         <td>@item.ChucVu</td>
-                        <td>@item.LoaiNhanVien</td>
-                        <td>@item.SoCaToiThieuTuan</td>
-                        <td>@item.SoGioToiThieuTuan</td>
-                        <td>@item.TrangThai</td>
                         <td>
-                            @(item.MaTaiKhoanNavigation != null
-                                                    ? item.MaTaiKhoanNavigation.TenDangNhap
-                                                    : "Chưa gắn")
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.MaNhanVien" class="btn btn-info btn-sm">Chi tiết</a>
-                        <a asp-action="Edit" asp-route-id="@item.MaNhanVien" class="btn btn-warning btn-sm">Sửa</a>
-                        <a asp-action="Delete" asp-route-id="@item.MaNhanVien" class="btn btn-danger btn-sm">Xóa</a>
-                    </td>
-                </tr>
-                                }
+                            @if (item.LoaiNhanVien == "Full-time")
+                            {
+                                <span class="badge bg-assigned">Full-time</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-pending">Part-time</span>
+                            }
+                        </td>
+                        <td class="text-center small">
+                            <div>@item.SoCaToiThieuTuan ca/tuần</div>
+                            <div class="text-muted">@item.SoGioToiThieuTuan giờ/tuần</div>
+                        </td>
+                        <td><span class="badge @stClass">@item.TrangThai</span></td>
+                        <td>
+                            @if (item.MaTaiKhoanNavigation != null)
+                            {
+                                <span><i class="bi bi-person-check text-success"></i> @item.MaTaiKhoanNavigation.TenDangNhap</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted"><i class="bi bi-dash-circle"></i> Chưa gắn</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="action-group">
+                                <a asp-action="Details" asp-route-id="@item.MaNhanVien" class="btn btn-sm btn-outline-secondary" title="Chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.MaNhanVien" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-id="@item.MaNhanVien" data-name="@item.HoTen">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="10" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Delete" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa nhân viên <strong id="deleteName"></strong>?
+                <div class="mt-2 small text-muted">Lưu ý: nếu nhân viên đã có phân công hoặc đăng ký ca, hệ thống sẽ chặn xóa.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('deleteId').value = btn.getAttribute('data-id');
+            document.getElementById('deleteName').textContent = btn.getAttribute('data-name');
+        });
+    </script>
+}

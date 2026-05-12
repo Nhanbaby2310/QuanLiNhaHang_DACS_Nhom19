@@ -1,0 +1,145 @@
+﻿@model DACS_Nhom19.ViewModels.NhanVienDashboardViewModel
+@{
+    ViewData["Title"] = "Trang chủ nhân viên";
+    bool dat = Model.SoCaTrongTuan >= Model.SoCaToiThieuTuan && Model.TongGioTrongTuan >= Model.SoGioToiThieuTuan;
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-emoji-smile"></i> Chào, @Model.HoTen</h2>
+        <p class="page-subtitle">
+            Mã nhân viên: @Model.MaNhanVienCode • Tuần:
+            @Model.TuNgay.ToString("dd/MM/yyyy") - @Model.DenNgay.ToString("dd/MM/yyyy")
+        </p>
+    </div>
+    <div>
+        <a asp-controller="DangKyCa" asp-action="Create" class="btn btn-accent">
+            <i class="bi bi-plus-lg"></i> Đăng ký ca mới
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-1">
+            <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+            <div>
+                <div class="stat-label">Ca đã làm tuần này</div>
+                <div class="stat-value">@Model.SoCaTrongTuan<small class="fs-6 opacity-75"> / @Model.SoCaToiThieuTuan</small></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-2">
+            <div class="stat-icon"><i class="bi bi-hourglass-top"></i></div>
+            <div>
+                <div class="stat-label">Giờ làm tuần này</div>
+                <div class="stat-value">
+                    @Model.TongGioTrongTuan.ToString("0.##")<small class="fs-6 opacity-75"> / @Model.SoGioToiThieuTuan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-3">
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="stat-label">Đăng ký chờ duyệt</div>
+                <div class="stat-value">@Model.SoCaChoDuyet</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card bg-gd-4">
+            <div class="stat-icon"><i class="bi bi-@(dat ? "award-fill" : "exclamation-triangle-fill")"></i></div>
+            <div>
+                <div class="stat-label">Định mức tuần</div>
+                <div class="stat-value" style="font-size: 1.2rem;">@(dat ? "Đạt" : "Chưa đạt")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-calendar-event"></i> Ca sắp tới của bạn</div>
+            <div class="card-body p-0">
+                @if (!Model.CaSapToi.Any())
+                {
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                        <div class="mt-2">Không có ca nào sắp tới</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Ca</th>
+                                    <th>Giờ</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.CaSapToi)
+                                {
+                                    <tr>
+                                        <td><strong>@c.NgayLam.ToString("dd/MM/yyyy")</strong></td>
+                                        <td>@c.MaCaNavigation.TenCa</td>
+                                        <td class="text-muted small">
+                                            @c.MaCaNavigation.GioBatDau.ToString("HH:mm") - @c.MaCaNavigation.GioKetThuc.ToString("HH:mm")
+                                        </td>
+                                        <td><span class="badge bg-assigned">@c.TrangThai</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span><i class="bi bi-pencil-square"></i> Đăng ký gần đây</span>
+                <a asp-controller="DangKyCa" asp-action="Index" class="btn btn-sm btn-accent">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.DangKyCuaToi.Any())
+                {
+                    <div class="p-4 text-center text-muted">Chưa có đăng ký nào.</div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var d in Model.DangKyCuaToi)
+                        {
+                            var cls = d.TrangThai switch
+                            {
+                                "Chờ duyệt" => "bg-pending",
+                                "Đã duyệt" => "bg-approved",
+                                "Từ chối" => "bg-rejected",
+                                _ => "bg-inactive"
+                            };
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-semibold">@d.MaCaNavigation.TenCa</div>
+                                    <small class="text-muted">@d.NgayLam.ToString("dd/MM/yyyy") • đăng ký @d.NgayDangKy.ToString("HH:mm dd/MM")</small>
+                                </div>
+                                <span class="badge @cls">@d.TrangThai</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

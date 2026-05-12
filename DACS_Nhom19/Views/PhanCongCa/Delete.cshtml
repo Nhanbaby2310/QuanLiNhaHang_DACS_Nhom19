@@ -1,38 +1,36 @@
 ﻿@model DACS_Nhom19.Models.PhanCongCa
-
 @{
     ViewData["Title"] = "Xóa phân công ca";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-danger">Xóa phân công ca</h2>
-
-    <div class="alert alert-warning">
-        Bạn có chắc muốn xóa phân công ca này không?
+<div class="page-header">
+    <div>
+        <h2 class="page-title text-danger"><i class="bi bi-trash"></i> Xóa phân công ca</h2>
     </div>
-
-    <table class="table table-bordered">
-        <tr>
-            <th width="250">Nhân viên</th>
-            <td>@Model.MaNhanVienNavigation.MaNhanVienCode - @Model.MaNhanVienNavigation.HoTen</td>
-        </tr>
-        <tr>
-            <th>Ca làm</th>
-            <td>@Model.MaCaNavigation.TenCa</td>
-        </tr>
-        <tr>
-            <th>Ngày làm</th>
-            <td>@Model.NgayLam.ToString("dd/MM/yyyy")</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>@Model.TrangThai</td>
-        </tr>
-    </table>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="MaPhanCong" />
-        <button type="submit" class="btn btn-danger">Xóa</button>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-    </form>
 </div>
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill"></i> Bạn có chắc muốn xóa phân công ca này không?
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Nhân viên</dt>
+            <dd class="col-sm-9">@Model.MaNhanVienNavigation.HoTen (@Model.MaNhanVienNavigation.MaNhanVienCode)</dd>
+            <dt class="col-sm-3">Ca làm</dt>
+            <dd class="col-sm-9">@Model.MaCaNavigation.TenCa</dd>
+            <dt class="col-sm-3">Ngày làm</dt>
+            <dd class="col-sm-9">@Model.NgayLam.ToString("dd/MM/yyyy")</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">@Model.TrangThai</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="MaPhanCong" />
+    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+</form>

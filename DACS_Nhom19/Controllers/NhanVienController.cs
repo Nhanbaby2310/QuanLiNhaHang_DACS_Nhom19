@@ -166,11 +166,30 @@ namespace DACS_Nhom19.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var nhanVien = await _context.NhanViens.FindAsync(id);
-            if (nhanVien != null)
+            if (nhanVien == null)
+            {
+                TempData["Error"] = "Nhân viên không tồn tại.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool dangDung = await _context.PhanCongCas.AnyAsync(x => x.MaNhanVien == id)
+                         || await _context.DangKyCas.AnyAsync(x => x.MaNhanVien == id);
+
+            if (dangDung)
+            {
+                TempData["Error"] = $"Không thể xóa nhân viên '{nhanVien.HoTen}' vì đã có phân công hoặc đăng ký ca. Hãy chuyển trạng thái sang 'Nghỉ việc' thay vì xóa.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 _context.NhanViens.Remove(nhanVien);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Xóa nhân viên thành công.";
+            }
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = "Không thể xóa nhân viên do đang được tham chiếu ở bảng khác.";
             }
 
             return RedirectToAction(nameof(Index));

@@ -1,110 +1,166 @@
 ﻿@using System.Security.Claims
+@{
+    var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString()!;
+    var currentAction = (ViewContext.RouteData.Values["action"] ?? "").ToString()!;
+
+    string NavClass(string controller, params string[] actions)
+    {
+        if (!string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase))
+            return "";
+        if (actions == null || actions.Length == 0) return "active";
+        return actions.Any(a => string.Equals(currentAction, a, StringComparison.OrdinalIgnoreCase))
+            ? "active" : "";
+    }
+
+    var userName = User.Identity?.Name ?? "";
+    var userRole = User.FindFirstValue(System.Security.Claims.ClaimTypes.Role) ?? "";
+    var userInitial = !string.IsNullOrEmpty(userName) ? userName.Trim()[0].ToString().ToUpper() : "U";
+    var isAuth = User.Identity?.IsAuthenticated == true;
+}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DACS_Nhom19</title>
+    <title>@ViewData["Title"] - Quản lý ca làm nhà hàng</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DACS_Nhom19.styles.css" asp-append-version="true" />
+    
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">DACS_Nhom19</a>
+    @if (isAuth)
+    {
+        <div class="app-wrapper">
+            <aside class="sidebar" id="sidebar">
+                <a class="sidebar-brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-logo"><i class="bi bi-cup-hot-fill"></i></span>
+                    <span class="brand-text">
+                        Nhà hàng
+                        <small>Quản lý ca làm</small>
+                    </span>
+                </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <ul class="sidebar-nav">
+                    <li class="nav-section">Tổng quan</li>
+                    <li>
+                        <a class="@NavClass("Home", "Index")" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
 
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
+                    {
+                        <li class="nav-section">Quản lý</li>
+                        <li>
+                            <a class="@NavClass("NhanVien")" asp-controller="NhanVien" asp-action="Index">
+                                <i class="bi bi-people-fill"></i> Nhân viên
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("CaLam")" asp-controller="CaLam" asp-action="Index">
+                                <i class="bi bi-clock-history"></i> Ca làm
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("PhanCongCa", "Index", "Create", "Edit", "Details", "Delete")"
+                               asp-controller="PhanCongCa" asp-action="Index">
+                                <i class="bi bi-clipboard-check"></i> Phân công ca
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("PhanCongCa", "Calendar")"
+                               asp-controller="PhanCongCa" asp-action="Calendar">
+                                <i class="bi bi-calendar3-week"></i> Lịch tuần
+                            </a>
+                        </li>
+                    }
 
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                            </li>
+                    <li class="nav-section">Đăng ký</li>
+                    <li>
+                        <a class="@NavClass("DangKyCa")" asp-controller="DangKyCa" asp-action="Index">
+                            <i class="bi bi-pencil-square"></i> Đăng ký ca
+                        </a>
+                    </li>
 
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="TaiKhoan" asp-action="Index">Tài khoản</a>
-                                </li>
-                            }
+                    <li class="nav-section">Báo cáo</li>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
+                    {
+                        <li>
+                            <a class="@NavClass("ThongKe", "TongHop")" asp-controller="ThongKe" asp-action="TongHop">
+                                <i class="bi bi-bar-chart-line-fill"></i> Thống kê tổng hợp
+                            </a>
+                        </li>
+                    }
+                    @if (User.IsInRole("Nhân viên"))
+                    {
+                        <li>
+                            <a class="@NavClass("ThongKe", "CaNhan")" asp-controller="ThongKe" asp-action="CaNhan">
+                                <i class="bi bi-person-badge"></i> Thống kê của tôi
+                            </a>
+                        </li>
+                    }
 
-                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="NhanVien" asp-action="Index">Nhân viên</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="CaLam" asp-action="Index">Ca làm</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="PhanCongCa" asp-action="Index">Phân công ca</a>
-                                </li>
-                            }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-section">Hệ thống</li>
+                        <li>
+                            <a class="@NavClass("TaiKhoan")" asp-controller="TaiKhoan" asp-action="Index">
+                                <i class="bi bi-shield-lock-fill"></i> Tài khoản
+                            </a>
+                        </li>
+                    }
+                </ul>
 
-                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý") || User.IsInRole("Nhân viên"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="DangKyCa" asp-action="Index">Đăng ký ca</a>
-                                </li>
-                            }
-
-                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="ThongKe" asp-action="TongHop">Thống kê</a>
-                                </li>
-                            }
-
-                            @if (User.IsInRole("Nhân viên"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="ThongKe" asp-action="CaNhan">Thống kê của tôi</a>
-                                </li>
-                            }
-                        }
-                    </ul>
-
-                    <ul class="navbar-nav">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">
-                                    Xin chào, @User.Identity.Name
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-link nav-link text-danger" style="text-decoration:none;">
-                                        Đăng xuất
-                                    </button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                            </li>
-                        }
-                    </ul>
+                <div class="sidebar-footer">
+                    <div>&copy; @DateTime.Now.Year DACS Nhóm 19</div>
+                    <div>ASP.NET Core 8 • SQL Server</div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </aside>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            <div class="main-area">
+                <header class="topbar">
+                    <button class="menu-toggle" type="button" onclick="document.getElementById('sidebar').classList.toggle('show')">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <h1 class="topbar-title">@ViewData["Title"]</h1>
+
+                    <div class="topbar-user">
+                        <div class="user-avatar">@userInitial</div>
+                        <div class="user-info d-none d-md-block">
+                            <div class="user-name">@userName</div>
+                            <div class="user-role">@userRole</div>
+                        </div>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-logout">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="d-none d-sm-inline">Đăng xuất</span>
+                            </button>
+                        </form>
+                    </div>
+                </header>
+
+                <main class="content">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> @TempData["Success"]</div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]</div>
+                    }
+
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        @RenderBody()
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,98 +1,141 @@
 ﻿@model IEnumerable<DACS_Nhom19.Models.TaiKhoan>
-
 @{
     ViewData["Title"] = "Quản lý tài khoản";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Quản lý tài khoản</h2>
-
-
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    <form asp-action="Index" method="get" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm tên đăng nhập / tên hiển thị..." />
-        </div>
-
-        <div class="col-md-3">
-            <select name="maVaiTro" asp-items="ViewBag.VaiTroList" class="form-select">
-                <option value="">-- Chọn vai trò --</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <select name="trangThai" class="form-select">
-                <option value="">-- Trạng thái --</option>
-
-                @if (ViewBag.TrangThai == "Hoạt động")
-                {
-                    <option value="Hoạt động" selected>Hoạt động</option>
-                }
-                else
-                {
-                    <option value="Hoạt động">Hoạt động</option>
-                }
-
-                @if (ViewBag.TrangThai == "Khóa")
-                {
-                    <option value="Khóa" selected>Khóa</option>
-                }
-                else
-                {
-                    <option value="Khóa">Khóa</option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
-
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-success">+ Thêm tài khoản</a>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-shield-lock-fill"></i> Quản lý tài khoản</h2>
+        <p class="page-subtitle">Tổng @Model.Count() tài khoản</p>
     </div>
+    <a asp-action="Create" class="btn btn-accent">
+        <i class="bi bi-plus-lg"></i> Thêm tài khoản
+    </a>
+</div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tên đăng nhập / tên hiển thị..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="maVaiTro" asp-items="ViewBag.VaiTroList" class="form-select">
+                    <option value="">-- Chọn vai trò --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="Hoạt động" selected="@(ViewBag.TrangThai == "Hoạt động")">Hoạt động</option>
+                    <option value="Khóa" selected="@(ViewBag.TrangThai == "Khóa")">Khóa</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-x-circle"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Tên đăng nhập</th>
                     <th>Họ tên hiển thị</th>
                     <th>Vai trò</th>
                     <th>Trạng thái</th>
                     <th>Ngày tạo</th>
-                    <th width="220">Thao tác</th>
+                    <th>Đăng nhập cuối</th>
+                    <th class="text-end" style="width: 170px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var roleClass = item.MaVaiTroNavigation?.TenVaiTro switch
+                    {
+                        "Admin" => "bg-rejected",
+                        "Quản lý" => "bg-pending",
+                        "Nhân viên" => "bg-assigned",
+                        _ => "bg-inactive"
+                    };
                     <tr>
-                        <td>@item.TenDangNhap</td>
+                        <td><i class="bi bi-person-circle"></i> <code>@item.TenDangNhap</code></td>
                         <td>@item.HoTenHienThi</td>
-                        <td>@item.MaVaiTroNavigation?.TenVaiTro</td>
-                        <td>@item.TrangThai</td>
-                        <td>@item.NgayTao</td>
+                        <td><span class="badge @roleClass">@item.MaVaiTroNavigation?.TenVaiTro</span></td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@item.MaTaiKhoan" class="btn btn-info btn-sm">Chi tiết</a>
-                            <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn btn-warning btn-sm">Sửa</a>
-                            <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan" class="btn btn-danger btn-sm">Xóa</a>
+                            @if (item.TrangThai == "Hoạt động")
+                            {
+                                <span class="badge bg-active">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-inactive">Khóa</span>
+                            }
+                        </td>
+                        <td class="small text-muted">@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                        <td class="small text-muted">
+                            @(item.LanDangNhapCuoi?.ToString("HH:mm dd/MM/yyyy") ?? "-")
+                        </td>
+                        <td class="text-end">
+                            <div class="action-group">
+                                <a asp-action="Details" asp-route-id="@item.MaTaiKhoan" class="btn btn-sm btn-outline-secondary" title="Chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-id="@item.MaTaiKhoan" data-name="@item.TenDangNhap">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Delete" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa tài khoản <strong id="deleteName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('deleteId').value = btn.getAttribute('data-id');
+            document.getElementById('deleteName').textContent = btn.getAttribute('data-name');
+        });
+    </script>
+}

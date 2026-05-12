@@ -1,51 +1,50 @@
 ﻿@model DACS_Nhom19.Models.CaLam
-
 @{
     ViewData["Title"] = "Chi tiết ca làm";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Chi tiết ca làm</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-info-circle"></i> Chi tiết ca làm</h2>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.MaCa" class="btn btn-primary"><i class="bi bi-pencil"></i> Sửa</a>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+    </div>
+</div>
 
-    <table class="table table-bordered">
-        <tr>
-            <th width="250">Mã ca</th>
-            <td>@Model.MaCaCode</td>
-        </tr>
-        <tr>
-            <th>Tên ca</th>
-            <td>@Model.TenCa</td>
-        </tr>
-        <tr>
-            <th>Giờ bắt đầu</th>
-            <td>@Model.GioBatDau</td>
-        </tr>
-        <tr>
-            <th>Giờ kết thúc</th>
-            <td>@Model.GioKetThuc</td>
-        </tr>
-        <tr>
-            <th>Loại ca</th>
-            <td>@Model.LoaiCa</td>
-        </tr>
-        <tr>
-            <th>Số lượng tối thiểu</th>
-            <td>@Model.SoLuongNhanVienToiThieu</td>
-        </tr>
-        <tr>
-            <th>Số lượng tối đa</th>
-            <td>@Model.SoLuongNhanVienToiDa</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>@Model.TrangThai</td>
-        </tr>
-        <tr>
-            <th>Ghi chú</th>
-            <td>@Model.GhiChu</td>
-        </tr>
-    </table>
-
-    <a asp-action="Edit" asp-route-id="@Model.MaCa" class="btn btn-warning">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Mã ca</dt>
+            <dd class="col-sm-9"><code>@Model.MaCaCode</code></dd>
+            <dt class="col-sm-3">Tên ca</dt>
+            <dd class="col-sm-9"><strong>@Model.TenCa</strong></dd>
+            <dt class="col-sm-3">Giờ bắt đầu</dt>
+            <dd class="col-sm-9">@Model.GioBatDau.ToString("HH:mm")</dd>
+            <dt class="col-sm-3">Giờ kết thúc</dt>
+            <dd class="col-sm-9">@Model.GioKetThuc.ToString("HH:mm")</dd>
+            <dt class="col-sm-3">Số giờ</dt>
+            <dd class="col-sm-9">@(Model.SoGio?.ToString("0.##") ?? "-") giờ</dd>
+            <dt class="col-sm-3">Loại ca</dt>
+            <dd class="col-sm-9">@Model.LoaiCa</dd>
+            <dt class="col-sm-3">Nhân viên tối thiểu</dt>
+            <dd class="col-sm-9">@Model.SoLuongNhanVienToiThieu</dd>
+            <dt class="col-sm-3">Nhân viên tối đa</dt>
+            <dd class="col-sm-9">@Model.SoLuongNhanVienToiDa</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">
+                @if (Model.TrangThai == "Hoạt động")
+                {
+                    <span class="badge bg-active">@Model.TrangThai</span>
+                }
+                else
+                {
+                    <span class="badge bg-inactive">@Model.TrangThai</span>
+                }
+            </dd>
+            <dt class="col-sm-3">Ghi chú</dt>
+            <dd class="col-sm-9">@(Model.GhiChu ?? "-")</dd>
+        </dl>
+    </div>
 </div>

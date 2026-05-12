@@ -1,139 +1,171 @@
 ﻿@model IEnumerable<DACS_Nhom19.Models.PhanCongCa>
-
 @{
     ViewData["Title"] = "Quản lý phân công ca";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Quản lý phân công ca</h2>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    <form asp-action="Index" method="get" class="row g-2 mb-3">
-        <div class="col-md-3">
-            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo nhân viên / ca..." />
-        </div>
-
-        <div class="col-md-2">
-            <input type="date" name="ngayLam" value="@ViewBag.NgayLam" class="form-control" />
-        </div>
-
-        <div class="col-md-3">
-            <select name="maCa" asp-items="ViewBag.CaLamList" class="form-select">
-                <option value="">-- Chọn ca làm --</option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select name="trangThai" class="form-select">
-                <option value="">-- Trạng thái --</option>
-
-                @if (ViewBag.TrangThai == "Đã phân công")
-                {
-                    <option value="Đã phân công" selected>Đã phân công</option>
-                }
-                else
-                {
-                    <option value="Đã phân công">Đã phân công</option>
-                }
-
-                @if (ViewBag.TrangThai == "Đổi ca")
-                {
-                    <option value="Đổi ca" selected>Đổi ca</option>
-                }
-                else
-                {
-                    <option value="Đổi ca">Đổi ca</option>
-                }
-
-                @if (ViewBag.TrangThai == "Nghỉ")
-                {
-                    <option value="Nghỉ" selected>Nghỉ</option>
-                }
-                else
-                {
-                    <option value="Nghỉ">Nghỉ</option>
-                }
-
-                @if (ViewBag.TrangThai == "Đã hủy")
-                {
-                    <option value="Đã hủy" selected>Đã hủy</option>
-                }
-                else
-                {
-                    <option value="Đã hủy">Đã hủy</option>
-                }
-
-                @if (ViewBag.TrangThai == "Hoàn thành")
-                {
-                    <option value="Hoàn thành" selected>Hoàn thành</option>
-                }
-                else
-                {
-                    <option value="Hoàn thành">Hoàn thành</option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
-
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-success">+ Thêm phân công ca</a>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-clipboard-check"></i> Quản lý phân công ca</h2>
+        <p class="page-subtitle">Tổng @Model.Count() phân công</p>
     </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Calendar" class="btn btn-outline-primary">
+            <i class="bi bi-calendar3"></i> Xem dạng lịch
+        </a>
+        <a asp-action="Create" class="btn btn-accent">
+            <i class="bi bi-plus-lg"></i> Phân công mới
+        </a>
+    </div>
+</div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Nhân viên / ca..." />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="ngayLam" value="@ViewBag.NgayLam" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <select name="maCa" asp-items="ViewBag.CaLamList" class="form-select">
+                    <option value="">-- Chọn ca làm --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="Đã phân công" selected="@(ViewBag.TrangThai == "Đã phân công")">Đã phân công</option>
+                    <option value="Đổi ca" selected="@(ViewBag.TrangThai == "Đổi ca")">Đổi ca</option>
+                    <option value="Nghỉ" selected="@(ViewBag.TrangThai == "Nghỉ")">Nghỉ</option>
+                    <option value="Đã hủy" selected="@(ViewBag.TrangThai == "Đã hủy")">Đã hủy</option>
+                    <option value="Hoàn thành" selected="@(ViewBag.TrangThai == "Hoàn thành")">Hoàn thành</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-x-circle"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Nhân viên</th>
                     <th>Ca làm</th>
                     <th>Ngày làm</th>
-                    <th>Giờ bắt đầu</th>
-                    <th>Giờ kết thúc</th>
+                    <th>Giờ</th>
                     <th>Trạng thái</th>
                     <th>Ghi chú</th>
-                    <th width="220">Thao tác</th>
+                    <th class="text-end" style="width: 260px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var statusClass = item.TrangThai switch
+                    {
+                        "Đã phân công" => "bg-assigned",
+                        "Hoàn thành" => "bg-done",
+                        "Đã hủy" => "bg-canceled",
+                        "Đổi ca" => "bg-pending",
+                        "Nghỉ" => "bg-pending",
+                        _ => "bg-inactive"
+                    };
                     <tr>
-                        <td>@item.MaNhanVienNavigation.MaNhanVienCode - @item.MaNhanVienNavigation.HoTen</td>
+                        <td>
+                            <div><strong>@item.MaNhanVienNavigation.HoTen</strong></div>
+                            <small class="text-muted">@item.MaNhanVienNavigation.MaNhanVienCode</small>
+                        </td>
                         <td>@item.MaCaNavigation.TenCa</td>
                         <td>@item.NgayLam.ToString("dd/MM/yyyy")</td>
-                        <td>@item.MaCaNavigation.GioBatDau</td>
-                        <td>@item.MaCaNavigation.GioKetThuc</td>
-                        <td>@item.TrangThai</td>
-                        <td>@item.GhiChu</td>
-                        <td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.MaPhanCong" class="btn btn-info btn-sm">Chi tiết</a>
-
-                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.MaPhanCong" class="btn btn-warning btn-sm">Sửa</a>
-                                <a asp-action="Delete" asp-route-id="@item.MaPhanCong" class="btn btn-danger btn-sm">Xóa</a>
-
-                                @if (item.TrangThai != "Hoàn thành" && item.TrangThai != "Đã hủy")
-                                {
-                                    <a asp-action="HoanThanh" asp-route-id="@item.MaPhanCong" class="btn btn-success btn-sm">
-                                        Hoàn thành
-                                    </a>
-                                }
-                            }
+                        <td class="small text-muted">
+                            @item.MaCaNavigation.GioBatDau.ToString("HH:mm") - @item.MaCaNavigation.GioKetThuc.ToString("HH:mm")
                         </td>
+                        <td><span class="badge @statusClass">@item.TrangThai</span></td>
+                        <td class="small">@item.GhiChu</td>
+                        <td class="text-end">
+                            <div class="action-group">
+                                <a asp-action="Details" asp-route-id="@item.MaPhanCong" class="btn btn-sm btn-outline-secondary" title="Chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.MaPhanCong" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    @if (item.TrangThai != "Hoàn thành" && item.TrangThai != "Đã hủy")
+                                    {
+                                        <form method="post" asp-action="HoanThanh" asp-route-id="@item.MaPhanCong" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success" title="Đánh dấu hoàn thành"
+                                                    onclick="return confirm('Đánh dấu phân công này là Hoàn thành?');">
+                                                <i class="bi bi-check2-all"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" asp-action="Huy" asp-route-id="@item.MaPhanCong" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Hủy ca"
+                                                    onclick="return confirm('Hủy phân công này?');">
+                                                <i class="bi bi-slash-circle"></i>
+                                            </button>
+                                        </form>
+                                    }
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="@item.MaPhanCong" data-name="@item.MaNhanVienNavigation.HoTen - @item.MaCaNavigation.TenCa - @item.NgayLam.ToString("dd/MM/yyyy")">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                }
+                            </div>
                         </td>
                     </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Delete" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa phân công <strong id="deleteName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('deleteId').value = btn.getAttribute('data-id');
+            document.getElementById('deleteName').textContent = btn.getAttribute('data-name');
+        });
+    </script>
+}

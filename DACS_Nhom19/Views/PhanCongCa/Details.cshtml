@@ -1,47 +1,54 @@
 ﻿@model DACS_Nhom19.Models.PhanCongCa
-
 @{
     ViewData["Title"] = "Chi tiết phân công ca";
+
+    var stClass = Model.TrangThai switch
+    {
+        "Đã phân công" => "bg-assigned",
+        "Hoàn thành" => "bg-done",
+        "Đã hủy" => "bg-canceled",
+        _ => "bg-pending"
+    };
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Chi tiết phân công ca</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-info-circle"></i> Chi tiết phân công ca</h2>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.MaPhanCong" class="btn btn-primary"><i class="bi bi-pencil"></i> Sửa</a>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+    </div>
+</div>
 
-    <table class="table table-bordered">
-        <tr>
-            <th width="250">Nhân viên</th>
-            <td>@Model.MaNhanVienNavigation.MaNhanVienCode - @Model.MaNhanVienNavigation.HoTen</td>
-        </tr>
-        <tr>
-            <th>Ca làm</th>
-            <td>@Model.MaCaNavigation.MaCaCode - @Model.MaCaNavigation.TenCa</td>
-        </tr>
-        <tr>
-            <th>Ngày làm</th>
-            <td>@Model.NgayLam.ToString("dd/MM/yyyy")</td>
-        </tr>
-        <tr>
-            <th>Giờ bắt đầu</th>
-            <td>@Model.MaCaNavigation.GioBatDau</td>
-        </tr>
-        <tr>
-            <th>Giờ kết thúc</th>
-            <td>@Model.MaCaNavigation.GioKetThuc</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>@Model.TrangThai</td>
-        </tr>
-        <tr>
-            <th>Ghi chú</th>
-            <td>@Model.GhiChu</td>
-        </tr>
-        <tr>
-            <th>Ngày tạo</th>
-            <td>@Model.NgayTao</td>
-        </tr>
-    </table>
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Nhân viên</dt>
+            <dd class="col-sm-9"><strong>@Model.MaNhanVienNavigation.HoTen</strong> (@Model.MaNhanVienNavigation.MaNhanVienCode)</dd>
 
-    <a asp-action="Edit" asp-route-id="@Model.MaPhanCong" class="btn btn-warning">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+            <dt class="col-sm-3">Ca làm</dt>
+            <dd class="col-sm-9">@Model.MaCaNavigation.MaCaCode - @Model.MaCaNavigation.TenCa</dd>
+
+            <dt class="col-sm-3">Ngày làm</dt>
+            <dd class="col-sm-9">@Model.NgayLam.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Giờ</dt>
+            <dd class="col-sm-9">
+                @Model.MaCaNavigation.GioBatDau.ToString("HH:mm") - @Model.MaCaNavigation.GioKetThuc.ToString("HH:mm")
+            </dd>
+
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><span class="badge @stClass">@Model.TrangThai</span></dd>
+
+            <dt class="col-sm-3">Ghi chú</dt>
+            <dd class="col-sm-9">@(Model.GhiChu ?? "-")</dd>
+
+            <dt class="col-sm-3">Người tạo</dt>
+            <dd class="col-sm-9">@(Model.NguoiTaoNavigation?.HoTenHienThi ?? "-")</dd>
+
+            <dt class="col-sm-3">Ngày tạo</dt>
+            <dd class="col-sm-9">@Model.NgayTao.ToString("HH:mm dd/MM/yyyy")</dd>
+        </dl>
+    </div>
 </div>

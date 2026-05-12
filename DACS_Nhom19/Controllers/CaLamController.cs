@@ -189,13 +189,33 @@ namespace DACS_Nhom19.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var caLam = await _context.CaLams.FindAsync(id);
+            if (caLam == null)
+            {
+                TempData["Error"] = "Ca làm không tồn tại.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (caLam != null)
+            // Kiểm tra ràng buộc: đã được dùng trong PhanCongCa hoặc DangKyCa?
+            bool dangDung = await _context.PhanCongCas.AnyAsync(x => x.MaCa == id)
+                         || await _context.DangKyCas.AnyAsync(x => x.MaCa == id);
+
+            if (dangDung)
+            {
+                TempData["Error"] = $"Không thể xóa ca '{caLam.TenCa}' vì đã được dùng trong phân công hoặc đăng ký. Hãy đổi trạng thái sang 'Ngưng' thay vì xóa.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+
             {
                 _context.CaLams.Remove(caLam);
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Xóa ca làm thành công.";
+            }
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = "Không thể xóa ca làm do đang được tham chiếu.";
             }
 
             return RedirectToAction(nameof(Index));

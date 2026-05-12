@@ -1,39 +1,39 @@
 ﻿@model DACS_Nhom19.Models.PhanCongCa
 
-<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div asp-validation-summary="All" class="alert alert-danger py-2" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label asp-for="MaNhanVien" class="form-label">Nhân viên</label>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="MaNhanVien" class="form-label"><i class="bi bi-person"></i> Nhân viên</label>
         <select asp-for="MaNhanVien" asp-items="ViewBag.MaNhanVien" class="form-select">
             <option value="">-- Chọn nhân viên --</option>
         </select>
-        <span asp-validation-for="MaNhanVien" class="text-danger"></span>
+        <span asp-validation-for="MaNhanVien" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="MaCa" class="form-label">Ca làm</label>
+    <div class="col-md-6">
+        <label asp-for="MaCa" class="form-label"><i class="bi bi-clock"></i> Ca làm</label>
         <select asp-for="MaCa" asp-items="ViewBag.MaCa" class="form-select">
             <option value="">-- Chọn ca làm --</option>
         </select>
-        <span asp-validation-for="MaCa" class="text-danger"></span>
+        <span asp-validation-for="MaCa" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="NgayLam" class="form-label">Ngày làm</label>
+    <div class="col-md-6">
+        <label asp-for="NgayLam" class="form-label"><i class="bi bi-calendar"></i> Ngày làm</label>
         <input asp-for="NgayLam" type="date" class="form-control" />
-        <span asp-validation-for="NgayLam" class="text-danger"></span>
+        <span asp-validation-for="NgayLam" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="TrangThai" class="form-label">Trạng thái</label>
         <select asp-for="TrangThai" asp-items="ViewBag.TrangThaiList" class="form-select"></select>
-        <span asp-validation-for="TrangThai" class="text-danger"></span>
+        <span asp-validation-for="TrangThai" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-12 mb-3">
+    <div class="col-12">
         <label asp-for="GhiChu" class="form-label">Ghi chú</label>
         <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="GhiChu" class="text-danger"></span>
+        <span asp-validation-for="GhiChu" class="text-danger small"></span>
     </div>
 </div>

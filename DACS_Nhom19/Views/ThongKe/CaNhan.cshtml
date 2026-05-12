@@ -1,49 +1,99 @@
 ﻿@model DACS_Nhom19.ViewModels.ThongKeCaNhanViewModel
-
 @{
     ViewData["Title"] = "Thống kê của tôi";
+    var dat = Model.KetQua == "Đạt định mức";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Thống kê của tôi</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-person-badge"></i> Thống kê của tôi</h2>
+        <p class="page-subtitle">
+            @Model.HoTen • @Model.MaNhanVienCode •
+            Khoảng: @Model.TuNgay.ToString("dd/MM/yyyy") - @Model.DenNgay.ToString("dd/MM/yyyy")
+        </p>
+    </div>
+</div>
 
-    <table class="table table-bordered">
-        <tr>
-            <th width="260">Mã nhân viên</th>
-            <td>@Model.MaNhanVienCode</td>
-        </tr>
-        <tr>
-            <th>Họ tên</th>
-            <td>@Model.HoTen</td>
-        </tr>
-        <tr>
-            <th>Số ca tối thiểu/tuần</th>
-            <td>@Model.SoCaToiThieuTuan</td>
-        </tr>
-        <tr>
-            <th>Số giờ tối thiểu/tuần</th>
-            <td>@Model.SoGioToiThieuTuan</td>
-        </tr>
-        <tr>
-            <th>Tổng số ca hoàn thành</th>
-            <td>@Model.TongSoCa</td>
-        </tr>
-        <tr>
-            <th>Tổng số giờ hoàn thành</th>
-            <td>@Model.TongSoGio</td>
-        </tr>
-        <tr>
-            <th>Kết quả</th>
-            <td>
-                @if (Model.KetQua == "Đạt định mức")
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="CaNhan" method="get" class="row g-2">
+            <div class="col-md-3">
+                <label class="form-label small">Từ ngày</label>
+                <input type="date" name="tuNgay" value="@Model.TuNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Đến ngày</label>
+                <input type="date" name="denNgay" value="@Model.DenNgay.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="CaNhan" class="btn btn-outline-secondary">Tuần này</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="stat-card bg-gd-1">
+            <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+            <div>
+                <div class="stat-label">Số ca hoàn thành</div>
+                <div class="stat-value">@Model.TongSoCa<small class="fs-6 opacity-75"> / @Model.SoCaToiThieuTuan</small></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card bg-gd-2">
+            <div class="stat-icon"><i class="bi bi-hourglass-top"></i></div>
+            <div>
+                <div class="stat-label">Số giờ hoàn thành</div>
+                <div class="stat-value">@Model.TongSoGio.ToString("0.##")<small class="fs-6 opacity-75"> / @Model.SoGioToiThieuTuan</small></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card @(dat ? "bg-gd-2" : "bg-gd-1")">
+            <div class="stat-icon"><i class="bi bi-@(dat ? "award-fill" : "exclamation-triangle-fill")"></i></div>
+            <div>
+                <div class="stat-label">Kết quả</div>
+                <div class="stat-value" style="font-size: 1.25rem;">@Model.KetQua</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-list-check"></i> Chi tiết các ca đã hoàn thành (@Model.DanhSachCa.Count ca)
+    </div>
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Ca làm</th>
+                    <th>Giờ</th>
+                    <th class="text-end">Số giờ</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.DanhSachCa.Any())
                 {
-                    <span class="badge bg-success">@Model.KetQua</span>
+                    <tr><td colspan="5" class="text-center text-muted py-4">Chưa có ca nào trong khoảng này.</td></tr>
                 }
-                else
+                @foreach (var c in Model.DanhSachCa)
                 {
-                    <span class="badge bg-danger">@Model.KetQua</span>
+                    <tr>
+                        <td>@c.NgayLam.ToString("dd/MM/yyyy") <small class="text-muted">(@c.NgayLam.DayOfWeek)</small></td>
+                        <td>@c.TenCa</td>
+                        <td class="text-muted small">@c.GioBatDau - @c.GioKetThuc</td>
+                        <td class="text-end">@c.SoGio.ToString("0.##")</td>
+                        <td><span class="badge bg-done">@c.TrangThai</span></td>
+                    </tr>
                 }
-            </td>
-        </tr>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>

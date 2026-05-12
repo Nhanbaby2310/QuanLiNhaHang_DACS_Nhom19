@@ -1,18 +1,28 @@
 ﻿@model DACS_Nhom19.Models.CaLam
-
 @{
     ViewData["Title"] = "Thêm ca làm";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Thêm ca làm</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-plus-circle"></i> Thêm ca làm</h2>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
 
-    <form asp-action="Create" method="post">
-        <partial name="_Form" model="Model" />
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <partial name="_Form" model="Model" />
 
-        <button type="submit" class="btn btn-success">Lưu</button>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-    </form>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

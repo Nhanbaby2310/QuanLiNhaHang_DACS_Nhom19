@@ -1,91 +1,99 @@
 ﻿@model DACS_Nhom19.Models.NhanVien
 
-<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
+<h6 class="text-uppercase text-muted mb-3"><i class="bi bi-person-vcard"></i> Thông tin cá nhân</h6>
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
         <label asp-for="MaNhanVienCode" class="form-label">Mã nhân viên</label>
-        <input asp-for="MaNhanVienCode" class="form-control" />
-        <span asp-validation-for="MaNhanVienCode" class="text-danger"></span>
+        <input asp-for="MaNhanVienCode" class="form-control" placeholder="VD: NV001" />
+        <span asp-validation-for="MaNhanVienCode" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="HoTen" class="form-label">Họ tên</label>
         <input asp-for="HoTen" class="form-control" />
-        <span asp-validation-for="HoTen" class="text-danger"></span>
+        <span asp-validation-for="HoTen" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4">
         <label asp-for="GioiTinh" class="form-label">Giới tính</label>
         <select asp-for="GioiTinh" asp-items="ViewBag.GioiTinhList" class="form-select"></select>
-        <span asp-validation-for="GioiTinh" class="text-danger"></span>
+        <span asp-validation-for="GioiTinh" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4">
         <label asp-for="NgaySinh" class="form-label">Ngày sinh</label>
         <input asp-for="NgaySinh" type="date" class="form-control" />
-        <span asp-validation-for="NgaySinh" class="text-danger"></span>
+        <span asp-validation-for="NgaySinh" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4">
         <label asp-for="NgayVaoLam" class="form-label">Ngày vào làm</label>
         <input asp-for="NgayVaoLam" type="date" class="form-control" />
-        <span asp-validation-for="NgayVaoLam" class="text-danger"></span>
+        <span asp-validation-for="NgayVaoLam" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="SoDienThoai" class="form-label">Số điện thoại</label>
+    <div class="col-md-6">
+        <label asp-for="SoDienThoai" class="form-label"><i class="bi bi-telephone"></i> Số điện thoại</label>
         <input asp-for="SoDienThoai" class="form-control" />
-        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+        <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="Email" class="form-label">Email</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label"><i class="bi bi-envelope"></i> Email</label>
+        <input asp-for="Email" class="form-control" type="email" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-12">
+        <label asp-for="DiaChi" class="form-label"><i class="bi bi-geo-alt"></i> Địa chỉ</label>
+        <textarea asp-for="DiaChi" class="form-control" rows="2"></textarea>
+        <span asp-validation-for="DiaChi" class="text-danger small"></span>
+    </div>
+</div>
+
+<h6 class="text-uppercase text-muted mb-3"><i class="bi bi-briefcase"></i> Công việc</h6>
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
         <label asp-for="ChucVu" class="form-label">Chức vụ</label>
-        <input asp-for="ChucVu" class="form-control" />
-        <span asp-validation-for="ChucVu" class="text-danger"></span>
+        <input asp-for="ChucVu" class="form-control" placeholder="VD: Phục vụ, Đầu bếp..." />
+        <span asp-validation-for="ChucVu" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-6">
         <label asp-for="LoaiNhanVien" class="form-label">Loại nhân viên</label>
         <select asp-for="LoaiNhanVien" asp-items="ViewBag.LoaiNhanVienList" class="form-select"></select>
-        <span asp-validation-for="LoaiNhanVien" class="text-danger"></span>
+        <span asp-validation-for="LoaiNhanVien" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4">
         <label asp-for="SoCaToiThieuTuan" class="form-label">Số ca tối thiểu/tuần</label>
-        <input asp-for="SoCaToiThieuTuan" class="form-control" />
-        <span asp-validation-for="SoCaToiThieuTuan" class="text-danger"></span>
+        <input asp-for="SoCaToiThieuTuan" type="number" min="0" class="form-control" />
+        <span asp-validation-for="SoCaToiThieuTuan" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4">
         <label asp-for="SoGioToiThieuTuan" class="form-label">Số giờ tối thiểu/tuần</label>
-        <input asp-for="SoGioToiThieuTuan" class="form-control" />
-        <span asp-validation-for="SoGioToiThieuTuan" class="text-danger"></span>
+        <input asp-for="SoGioToiThieuTuan" type="number" step="0.5" min="0" class="form-control" />
+        <span asp-validation-for="SoGioToiThieuTuan" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4">
         <label asp-for="TrangThai" class="form-label">Trạng thái</label>
         <select asp-for="TrangThai" asp-items="ViewBag.TrangThaiList" class="form-select"></select>
-        <span asp-validation-for="TrangThai" class="text-danger"></span>
+        <span asp-validation-for="TrangThai" class="text-danger small"></span>
     </div>
+</div>
 
-    <div class="col-md-6 mb-3">
-        <label asp-for="MaTaiKhoan" class="form-label">Tài khoản đăng nhập</label>
+<h6 class="text-uppercase text-muted mb-3"><i class="bi bi-key"></i> Tài khoản đăng nhập</h6>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="MaTaiKhoan" class="form-label">Tài khoản</label>
         <select asp-for="MaTaiKhoan" asp-items="ViewBag.MaTaiKhoan" class="form-select">
             <option value="">-- Chưa gắn tài khoản --</option>
         </select>
-        <span asp-validation-for="MaTaiKhoan" class="text-danger"></span>
-    </div>
-
-    <div class="col-md-12 mb-3">
-        <label asp-for="DiaChi" class="form-label">Địa chỉ</label>
-        <textarea asp-for="DiaChi" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="DiaChi" class="text-danger"></span>
+        <span asp-validation-for="MaTaiKhoan" class="text-danger small"></span>
+        <small class="text-muted">Gắn tài khoản để nhân viên có thể tự đăng ký ca</small>
     </div>
 </div>

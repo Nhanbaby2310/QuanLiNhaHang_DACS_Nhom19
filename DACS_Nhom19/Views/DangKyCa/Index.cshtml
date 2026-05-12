@@ -1,94 +1,180 @@
 ﻿@model IEnumerable<DACS_Nhom19.Models.DangKyCa>
-
 @{
     ViewData["Title"] = "Đăng ký ca";
+    bool isQuanLy = User.IsInRole("Admin") || User.IsInRole("Quản lý");
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Danh sách đăng ký ca</h2>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    <form asp-action="Index" method="get" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo nhân viên / ca..." />
-        </div>
-
-        <div class="col-md-3">
-            <input type="date" name="ngayLam" value="@ViewBag.NgayLam" class="form-control" />
-        </div>
-
-        <div class="col-md-3">
-            <select name="trangThai" class="form-select">
-                <option value="">-- Trạng thái --</option>
-                <option value="Chờ duyệt">Chờ duyệt</option>
-                <option value="Đã duyệt">Đã duyệt</option>
-                <option value="Từ chối">Từ chối</option>
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
-
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-success">+ Đăng ký ca</a>
+<div class="page-header">
+    <div>
+        <h2 class="page-title"><i class="bi bi-pencil-square"></i> Đăng ký ca</h2>
+        <p class="page-subtitle">Tổng @Model.Count() đăng ký</p>
     </div>
+    <a asp-action="Create" class="btn btn-accent">
+        <i class="bi bi-plus-lg"></i> Đăng ký ca mới
+    </a>
+</div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo nhân viên / ca..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="ngayLam" value="@ViewBag.NgayLam" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="Chờ duyệt" selected="@(ViewBag.TrangThai == "Chờ duyệt")">Chờ duyệt</option>
+                    <option value="Đã duyệt" selected="@(ViewBag.TrangThai == "Đã duyệt")">Đã duyệt</option>
+                    <option value="Từ chối" selected="@(ViewBag.TrangThai == "Từ chối")">Từ chối</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-x-circle"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Nhân viên</th>
                     <th>Ca làm</th>
                     <th>Ngày làm</th>
-                    <th>Ngày đăng ký</th>
+                    <th>Đăng ký lúc</th>
                     <th>Trạng thái</th>
                     <th>Ghi chú</th>
-                    <th width="300">Thao tác</th>
+                    <th class="text-end" style="width: 240px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var statusClass = item.TrangThai switch
+                    {
+                        "Chờ duyệt" => "bg-pending",
+                        "Đã duyệt" => "bg-approved",
+                        "Từ chối" => "bg-rejected",
+                        _ => "bg-inactive"
+                    };
                     <tr>
-                        <td>@item.MaNhanVienNavigation.MaNhanVienCode - @item.MaNhanVienNavigation.HoTen</td>
+                        <td>
+                            <div><strong>@item.MaNhanVienNavigation.HoTen</strong></div>
+                            <small class="text-muted">@item.MaNhanVienNavigation.MaNhanVienCode</small>
+                        </td>
                         <td>@item.MaCaNavigation.TenCa</td>
                         <td>@item.NgayLam.ToString("dd/MM/yyyy")</td>
-                        <td>@item.NgayDangKy.ToString("dd/MM/yyyy HH:mm")
-                        <td>@item.TrangThai</td>
-                        <td>@item.GhiChu</td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.MaDangKy" class="btn btn-info btn-sm">Chi tiết</a>
+                        <td class="small text-muted">@item.NgayDangKy.ToString("HH:mm dd/MM/yyyy")</td>
+                        <td><span class="badge @statusClass">@item.TrangThai</span></td>
+                        <td class="small">@item.GhiChu</td>
+                        <td class="text-end">
+                            <div class="action-group">
+                                <a asp-action="Details" asp-route-id="@item.MaDangKy" class="btn btn-sm btn-outline-secondary" title="Chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                            @if (User.IsInRole("Admin") || User.IsInRole("Quản lý"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.MaDangKy" class="btn btn-warning btn-sm">Sửa</a>
-                                <a asp-action="Delete" asp-route-id="@item.MaDangKy" class="btn btn-danger btn-sm">Xóa</a>
+                                @if (isQuanLy && item.TrangThai == "Chờ duyệt")
+                                {
+                                    <form method="post" asp-action="Duyet" asp-route-id="@item.MaDangKy" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success" title="Duyệt"
+                                                onclick="return confirm('Duyệt đăng ký này?');">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm btn-warning" title="Từ chối"
+                                            data-bs-toggle="modal" data-bs-target="#tuChoiModal"
+                                            data-id="@item.MaDangKy" data-name="@item.MaNhanVienNavigation.HoTen - @item.MaCaNavigation.TenCa">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                }
 
-                                @if (item.TrangThai == "Chờ duyệt")
+                                @if ((isQuanLy || (item.TrangThai == "Chờ duyệt" && User.IsInRole("Nhân viên"))))
                                 {
-                                    <a asp-action="Duyet" asp-route-id="@item.MaDangKy" class="btn btn-success btn-sm">Duyệt</a>
-                                    <a asp-action="TuChoi" asp-route-id="@item.MaDangKy" class="btn btn-secondary btn-sm">Từ chối</a>
+                                    <a asp-action="Edit" asp-route-id="@item.MaDangKy" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="@item.MaDangKy" data-name="@item.MaNhanVienNavigation.HoTen - @item.MaCaNavigation.TenCa">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 }
-                            }
-                            else if (User.IsInRole("Nhân viên"))
-                            {
-                                @if (item.TrangThai == "Chờ duyệt")
-                                {
-                                    <a asp-action="Edit" asp-route-id="@item.MaDangKy" class="btn btn-warning btn-sm">Sửa</a>
-                                    <a asp-action="Delete" asp-route-id="@item.MaDangKy" class="btn btn-danger btn-sm">Xóa</a>
-                                }
-                            }
+                            </div>
                         </td>
                     </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Delete" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa đăng ký <strong id="deleteName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="tuChoiModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="TuChoi" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="tuChoiId" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-x-circle text-warning"></i> Từ chối đăng ký</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Từ chối đăng ký: <strong id="tuChoiName"></strong></p>
+                <label class="form-label">Lý do (không bắt buộc)</label>
+                <textarea name="lyDo" class="form-control" rows="3" placeholder="VD: Ca đã đủ nhân viên..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-warning"><i class="bi bi-x-lg"></i> Từ chối</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('deleteId').value = btn.getAttribute('data-id');
+            document.getElementById('deleteName').textContent = btn.getAttribute('data-name');
+        });
+        document.getElementById('tuChoiModal').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('tuChoiId').value = btn.getAttribute('data-id');
+            document.getElementById('tuChoiName').textContent = btn.getAttribute('data-name');
+        });
+    </script>
+}
